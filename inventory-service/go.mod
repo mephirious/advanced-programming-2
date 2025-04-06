@@ -3,7 +3,6 @@ module github.com/mephirious/advanced-programming-2/inventory-service
 go 1.24.0
 
 require (
-	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.17.3
