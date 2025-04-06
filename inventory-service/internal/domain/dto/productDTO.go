@@ -49,7 +49,7 @@ func MapProductToResponseDTO(p domain.Product) ProductResponseDTO {
 		ID:          p.ID.Hex(),
 		Name:        p.Name,
 		Description: p.Description,
-		CategoryID:  p.CategoryID,
+		CategoryID:  p.CategoryID.Hex(),
 		Price:       p.Price,
 		Stock:       p.Stock,
 		CreatedAt:   p.CreatedAt,

@@ -10,7 +10,7 @@ type Product struct {
 	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Name        string             `json:"name" bson:"name"`
 	Description string             `json:"description" bson:"description"`
-	CategoryID  string             `json:"category_id" bson:"category_id"`
+	CategoryID  primitive.ObjectID `json:"category_id" bson:"category_id"`
 	Price       float64            `json:"price" bson:"price"`
 	Stock       int                `json:"stock" bson:"stock"`
 	CreatedAt   time.Time          `json:"created_at" bson:"created_at"`

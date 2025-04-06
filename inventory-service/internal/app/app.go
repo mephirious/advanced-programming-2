@@ -31,10 +31,12 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	}
 
 	productRepository := repository.NewProductRepository(mongoDB.Connection)
+	productUseCase := usecase.NewProductUseCase(productRepository)
 
-	productUsecase := usecase.NewProductUseCase(productRepository)
+	categoryRepository := repository.NewCategoryRepository(mongoDB.Connection)
+	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
 
-	httpServer := service.New(cfg.Server, productUsecase)
+	httpServer := service.New(cfg.Server, productUseCase, categoryUseCase)
 
 	app := &App{
 		httpServer: httpServer,

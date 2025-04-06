@@ -24,10 +24,11 @@ type API struct {
 	cfg    config.HTTPServer
 	addr   string
 
-	productHandler *handler.ProductHandler
+	productHandler  *handler.ProductHandler
+	categoryHandler *handler.CategoryHandler
 }
 
-func New(cfg config.Server, productUsecase usecase.ProductUseCase) *API {
+func New(cfg config.Server, productUsecase usecase.ProductUseCase, categoryUseCase usecase.CategoryUseCase) *API {
 	gin.SetMode(cfg.HTTPServer.Mode)
 	server := gin.New()
 
@@ -35,12 +36,14 @@ func New(cfg config.Server, productUsecase usecase.ProductUseCase) *API {
 	server.Use(gin.Logger())
 
 	productHandler := handler.NewProductHandler(productUsecase)
+	categoryHandler := handler.NewCategoryHandler(categoryUseCase)
 
 	api := &API{
-		server:         server,
-		cfg:            cfg.HTTPServer,
-		addr:           fmt.Sprintf(serverIPAddress, cfg.HTTPServer.Port),
-		productHandler: productHandler,
+		server:          server,
+		cfg:             cfg.HTTPServer,
+		addr:            fmt.Sprintf(serverIPAddress, cfg.HTTPServer.Port),
+		productHandler:  productHandler,
+		categoryHandler: categoryHandler,
 	}
 
 	api.setupRoutes()
@@ -58,6 +61,15 @@ func (a *API) setupRoutes() {
 			products.GET("/:id", a.productHandler.GetProductByID)
 			products.PATCH("/:id", a.productHandler.UpdateProduct)
 			products.DELETE("/:id", a.productHandler.DeleteProduct)
+		}
+
+		category := v1.Group("/category")
+		{
+			category.POST("/", a.categoryHandler.CreateCategory)
+			category.GET("/", a.categoryHandler.GetAllCategories)
+			category.GET("/:id", a.categoryHandler.GetCategoryByID)
+			category.PATCH("/:id", a.categoryHandler.UpdateCategory)
+			category.DELETE("/:id", a.categoryHandler.DeleteCategory)
 		}
 	}
 }

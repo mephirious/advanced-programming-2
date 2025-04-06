@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain/dto"
@@ -29,10 +30,15 @@ func NewProductUseCase(repo repository.ProductRepository) *productUseCase {
 }
 
 func (uc *productUseCase) CreateProduct(ctx context.Context, dto dto.ProductCreateDTO) (*domain.Product, error) {
+	categoryObjectID, err := primitive.ObjectIDFromHex(dto.CategoryID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid category_id: %w", err)
+	}
+
 	product := &domain.Product{
 		Name:        dto.Name,
 		Description: dto.Description,
-		CategoryID:  dto.CategoryID,
+		CategoryID:  categoryObjectID,
 		Price:       dto.Price,
 		Stock:       dto.Stock,
 	}
@@ -56,6 +62,11 @@ func (uc *productUseCase) GetProductByID(ctx context.Context, id primitive.Objec
 }
 
 func (uc *productUseCase) UpdateProduct(ctx context.Context, id primitive.ObjectID, dto dto.ProductUpdateDTO) (*domain.Product, error) {
+	categoryObjectID, err := primitive.ObjectIDFromHex(*dto.CategoryID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid category_id: %w", err)
+	}
+
 	product, err := uc.productRepo.GetProductByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -71,7 +82,7 @@ func (uc *productUseCase) UpdateProduct(ctx context.Context, id primitive.Object
 		product.Description = *dto.Description
 	}
 	if dto.CategoryID != nil {
-		product.CategoryID = *dto.CategoryID
+		product.CategoryID = categoryObjectID
 	}
 	if dto.Price != nil {
 		product.Price = *dto.Price
