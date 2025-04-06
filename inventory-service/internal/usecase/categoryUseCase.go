@@ -38,6 +38,7 @@ func (uc *categoryUseCase) CreateCategory(ctx context.Context, dto dto.CategoryC
 	}
 
 	category := &domain.Category{
+		ID:          primitive.ObjectID(primitive.NewObjectID()),
 		Name:        dto.Name,
 		Description: dto.Description,
 	}

@@ -63,7 +63,7 @@ func (a *API) setupRoutes() {
 			products.DELETE("/:id", a.productHandler.DeleteProduct)
 		}
 
-		category := v1.Group("/category")
+		category := v1.Group("/categories")
 		{
 			category.POST("/", a.categoryHandler.CreateCategory)
 			category.GET("/", a.categoryHandler.GetAllCategories)

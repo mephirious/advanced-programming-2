@@ -36,6 +36,7 @@ func (uc *productUseCase) CreateProduct(ctx context.Context, dto dto.ProductCrea
 	}
 
 	product := &domain.Product{
+		ID:          primitive.ObjectID(primitive.NewObjectID()),
 		Name:        dto.Name,
 		Description: dto.Description,
 		CategoryID:  categoryObjectID,
