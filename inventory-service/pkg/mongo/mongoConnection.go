@@ -42,6 +42,8 @@ func NewDB(ctx context.Context, cfg Config) (*DB, error) {
 		return nil, fmt.Errorf("ping connection mongoDB Error: %w", err)
 	}
 
+	go db.reconnectOnFailure(ctx)
+
 	return db, nil
 }
 
@@ -65,7 +67,7 @@ func (db *DB) reconnectOnFailure(ctx context.Context) {
 			ticker.Stop()
 			err := db.Client.Disconnect(ctx)
 			if err != nil {
-				log.Printf("mongoDB close connection error: %w", err)
+				log.Printf("mongoDB close connection error: %v", err)
 				return
 			}
 

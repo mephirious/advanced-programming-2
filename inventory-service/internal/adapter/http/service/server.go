@@ -13,6 +13,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mephirious/advanced-programming-2/inventory-service/config"
+	"github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/http/service/handler"
+	"github.com/mephirious/advanced-programming-2/inventory-service/internal/usecase"
 )
 
 const serverIPAddress = "0.0.0.0:%d"
@@ -21,28 +23,42 @@ type API struct {
 	server *gin.Engine
 	cfg    config.HTTPServer
 	addr   string
+
+	productHandler *handler.ProductHandler
 }
 
-func New(cfg config.Server) *API {
+func New(cfg config.Server, productUsecase usecase.ProductUseCase) *API {
 	gin.SetMode(cfg.HTTPServer.Mode)
-
 	server := gin.New()
+
 	server.Use(gin.Recovery())
+	server.Use(gin.Logger())
+
+	productHandler := handler.NewProductHandler(productUsecase)
 
 	api := &API{
-		server: server,
-		cfg:    cfg.HTTPServer,
-		addr:   fmt.Sprintf(serverIPAddress, cfg.HTTPServer.Port),
+		server:         server,
+		cfg:            cfg.HTTPServer,
+		addr:           fmt.Sprintf(serverIPAddress, cfg.HTTPServer.Port),
+		productHandler: productHandler,
 	}
 
 	api.setupRoutes()
+
 	return api
 }
 
 func (a *API) setupRoutes() {
-	//v1 := a.server.Group("/api/v1")
+	v1 := a.server.Group("/api/v1")
 	{
-		//
+		products := v1.Group("/products")
+		{
+			products.POST("/", a.productHandler.CreateProduct)
+			products.GET("/", a.productHandler.GetAllProducts)
+			products.GET("/:id", a.productHandler.GetProductByID)
+			products.PATCH("/:id", a.productHandler.UpdateProduct)
+			products.DELETE("/:id", a.productHandler.DeleteProduct)
+		}
 	}
 }
 
@@ -62,12 +78,13 @@ func (a *API) Stop() error {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	sig := <-quit
-	log.Println("Shutdown signal received:", sig.String())
+	log.Println("Shutdown signal received", "signal:", sig.String())
 
 	_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	log.Println("HTTP server shutting down gracefully")
+
 	log.Println("HTTP server stopped successfully")
 
 	return nil
