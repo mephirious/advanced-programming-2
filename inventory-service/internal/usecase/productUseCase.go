@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain"
@@ -57,7 +56,7 @@ func (uc *productUseCase) GetProductByID(ctx context.Context, id primitive.Objec
 		return nil, err
 	}
 	if product == nil {
-		return nil, errors.New("product not found")
+		return nil, fmt.Errorf("product not found")
 	}
 	return product, nil
 }
@@ -73,7 +72,7 @@ func (uc *productUseCase) UpdateProduct(ctx context.Context, id primitive.Object
 		return nil, err
 	}
 	if product == nil {
-		return nil, errors.New("product not found")
+		return nil, fmt.Errorf("product not found")
 	}
 
 	if dto.Name != nil {

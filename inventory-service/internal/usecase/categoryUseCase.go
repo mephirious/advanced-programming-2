@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain/dto"
@@ -34,7 +34,7 @@ func (uc *categoryUseCase) CreateCategory(ctx context.Context, dto dto.CategoryC
 		return nil, err
 	}
 	if existing != nil {
-		return nil, errors.New("category with this name already exists")
+		return nil, fmt.Errorf("category with this name already exists")
 	}
 
 	category := &domain.Category{
@@ -56,7 +56,7 @@ func (uc *categoryUseCase) GetCategoryByID(ctx context.Context, id primitive.Obj
 		return nil, err
 	}
 	if category == nil {
-		return nil, errors.New("category not found")
+		return nil, fmt.Errorf("category not found")
 	}
 	return category, nil
 }
@@ -67,7 +67,7 @@ func (uc *categoryUseCase) UpdateCategory(ctx context.Context, id primitive.Obje
 		return nil, err
 	}
 	if category == nil {
-		return nil, errors.New("category not found")
+		return nil, fmt.Errorf("category not found")
 	}
 
 	if dto.Name != nil && *dto.Name != category.Name {
@@ -76,7 +76,7 @@ func (uc *categoryUseCase) UpdateCategory(ctx context.Context, id primitive.Obje
 			return nil, err
 		}
 		if existing != nil {
-			return nil, errors.New("another category with this name already exists")
+			return nil, fmt.Errorf("another category with this name already exists")
 		}
 	}
 
