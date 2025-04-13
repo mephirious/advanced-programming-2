@@ -26,9 +26,10 @@ type API struct {
 
 	productHandler  *handler.ProductHandler
 	categoryHandler *handler.CategoryHandler
+	discountHandler *handler.DiscountHandler
 }
 
-func New(cfg config.Server, productUsecase usecase.ProductUseCase, categoryUseCase usecase.CategoryUseCase) *API {
+func New(cfg config.Server, productUsecase usecase.ProductUseCase, categoryUseCase usecase.CategoryUseCase, discountUseCase usecase.DiscountUseCase) *API {
 	gin.SetMode(cfg.HTTPServer.Mode)
 	server := gin.New()
 
@@ -37,6 +38,7 @@ func New(cfg config.Server, productUsecase usecase.ProductUseCase, categoryUseCa
 
 	productHandler := handler.NewProductHandler(productUsecase)
 	categoryHandler := handler.NewCategoryHandler(categoryUseCase)
+	discountHandler := handler.NewDiscountHandler(discountUseCase)
 
 	api := &API{
 		server:          server,
@@ -44,6 +46,7 @@ func New(cfg config.Server, productUsecase usecase.ProductUseCase, categoryUseCa
 		addr:            fmt.Sprintf(serverIPAddress, cfg.HTTPServer.Port),
 		productHandler:  productHandler,
 		categoryHandler: categoryHandler,
+		discountHandler: discountHandler,
 	}
 
 	api.setupRoutes()
@@ -70,6 +73,13 @@ func (a *API) setupRoutes() {
 			category.GET("/:id", a.categoryHandler.GetCategoryByID)
 			category.PATCH("/:id", a.categoryHandler.UpdateCategory)
 			category.DELETE("/:id", a.categoryHandler.DeleteCategory)
+		}
+
+		discount := v1.Group("/discounts")
+		{
+			discount.GET("/:id", a.discountHandler.GetAllProductsWithPromotion)
+			discount.DELETE("/:id", a.discountHandler.DeleteDiscount)
+			discount.POST("/", a.discountHandler.CreateDiscount)
 		}
 	}
 }

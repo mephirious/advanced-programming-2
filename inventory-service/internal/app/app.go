@@ -36,7 +36,10 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	categoryRepository := repository.NewCategoryRepository(mongoDB.Connection)
 	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
 
-	httpServer := service.New(cfg.Server, productUseCase, categoryUseCase)
+	discountRepository := repository.NewDiscountRepository(mongoDB.Connection)
+	discountUseCase := usecase.NewDiscountUseCase(discountRepository)
+
+	httpServer := service.New(cfg.Server, productUseCase, categoryUseCase, discountUseCase)
 
 	app := &App{
 		httpServer: httpServer,
