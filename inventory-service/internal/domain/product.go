@@ -12,7 +12,7 @@ type Product struct {
 	Description string             `json:"description" bson:"description"`
 	CategoryID  primitive.ObjectID `json:"category_id" bson:"category_id"`
 	Price       float64            `json:"price" bson:"price"`
-	Stock       int                `json:"stock" bson:"stock"`
+	Stock       int32              `json:"stock" bson:"stock"`
 	CreatedAt   time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt   time.Time          `json:"updated_at" bson:"updated_at"`
 }

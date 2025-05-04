@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mephirious/advanced-programming-2/order-service/internal/adapter/http/service/gateway"
 	"github.com/mephirious/advanced-programming-2/order-service/internal/domain"
 	"github.com/mephirious/advanced-programming-2/order-service/internal/domain/dto"
 	"github.com/mephirious/advanced-programming-2/order-service/internal/repository"
@@ -20,14 +19,12 @@ type OrderUseCase interface {
 }
 
 type orderUseCase struct {
-	orderRepo   repository.OrderRepository
-	productGate gateway.ProductGateway
+	orderRepo repository.OrderRepository
 }
 
-func NewOrderUseCase(repo repository.OrderRepository, gate gateway.ProductGateway) *orderUseCase {
+func NewOrderUseCase(repo repository.OrderRepository) *orderUseCase {
 	return &orderUseCase{
-		orderRepo:   repo,
-		productGate: gate,
+		orderRepo: repo,
 	}
 }
 
@@ -42,34 +39,22 @@ func (uc *orderUseCase) CreateOrder(ctx context.Context, dto dto.OrderCreateDTO)
 		productIDs[i] = item.ProductID
 	}
 
-	productPrices, err := uc.productGate.GetProductPrices(ctx, productIDs)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get product prices: %w", err)
-	}
-
 	items := make([]domain.OrderItem, len(dto.Items))
-	var total float64
-
 	for i, item := range dto.Items {
 		productID, err := primitive.ObjectIDFromHex(item.ProductID)
 		if err != nil {
 			return nil, fmt.Errorf("invalid product ID: %w", err)
 		}
-
-		price := productPrices[item.ProductID]
 		items[i] = domain.OrderItem{
 			ProductID: productID,
 			Quantity:  item.Quantity,
-			Price:     price,
 		}
-		total += price * float64(item.Quantity)
 	}
 
 	order := &domain.Order{
 		ID:     primitive.ObjectID(primitive.NewObjectID()),
 		UserID: userID,
 		Items:  items,
-		Total:  total,
 		Status: domain.OrderStatusPending,
 	}
 

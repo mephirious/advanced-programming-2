@@ -22,8 +22,8 @@ type OrderUpdateDTO struct {
 
 type OrderFilterDTO struct {
 	UserID string `form:"user_id"`
-	Limit  int    `form:"limit,default=20"`
-	Page   int    `form:"page,default=1"`
+	Limit  int32  `form:"limit,default=20"`
+	Page   int32  `form:"page,default=1"`
 	Status string `form:"status"`
 }
 

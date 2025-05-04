@@ -62,17 +62,9 @@ func (uc *productUseCase) GetProductByID(ctx context.Context, id primitive.Objec
 }
 
 func (uc *productUseCase) UpdateProduct(ctx context.Context, id primitive.ObjectID, dto dto.ProductUpdateDTO) (*domain.Product, error) {
-	categoryObjectID, err := primitive.ObjectIDFromHex(*dto.CategoryID)
-	if err != nil {
-		return nil, fmt.Errorf("invalid category_id: %w", err)
-	}
-
 	product, err := uc.productRepo.GetProductByID(ctx, id)
 	if err != nil {
 		return nil, err
-	}
-	if product == nil {
-		return nil, fmt.Errorf("product not found")
 	}
 
 	if dto.Name != nil {
@@ -82,7 +74,11 @@ func (uc *productUseCase) UpdateProduct(ctx context.Context, id primitive.Object
 		product.Description = *dto.Description
 	}
 	if dto.CategoryID != nil {
-		product.CategoryID = categoryObjectID
+		categoryID, err := primitive.ObjectIDFromHex(*dto.CategoryID)
+		if err != nil {
+			return nil, err
+		}
+		product.CategoryID = categoryID
 	}
 	if dto.Price != nil {
 		product.Price = *dto.Price
@@ -91,11 +87,17 @@ func (uc *productUseCase) UpdateProduct(ctx context.Context, id primitive.Object
 		product.Stock = *dto.Stock
 	}
 
-	if err := uc.productRepo.UpdateProduct(ctx, product); err != nil {
+	err = uc.productRepo.UpdateProduct(ctx, product)
+	if err != nil {
 		return nil, err
 	}
 
-	return product, nil
+	p1roduct, err := uc.productRepo.GetProductByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return p1roduct, nil
 }
 
 func (uc *productUseCase) DeleteProduct(ctx context.Context, id primitive.ObjectID) error {

@@ -21,20 +21,56 @@ type OrderRepository interface {
 }
 
 type orderRepository struct {
-	collection *mongo.Collection
+	collection        *mongo.Collection
+	productCollection *mongo.Collection
 }
 
 func NewOrderRepository(db *mongo.Database) *orderRepository {
 	return &orderRepository{
-		collection: db.Collection("orders"),
+		collection:        db.Collection("orders"),
+		productCollection: db.Collection("products"),
 	}
 }
-
 func (r *orderRepository) CreateOrder(ctx context.Context, order *domain.Order) error {
 	order.CreatedAt = time.Now()
 	order.UpdatedAt = time.Now()
 
-	_, err := r.collection.InsertOne(ctx, order)
+	productIDs := make([]primitive.ObjectID, len(order.Items))
+	for i, item := range order.Items {
+		productIDs[i] = item.ProductID
+	}
+
+	cursor, err := r.productCollection.Find(ctx, bson.M{"_id": bson.M{"$in": productIDs}})
+	if err != nil {
+		return fmt.Errorf("failed to find products: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	productPrices := make(map[primitive.ObjectID]float64)
+
+	for cursor.Next(ctx) {
+		var product domain.Product
+		if err := cursor.Decode(&product); err != nil {
+			return fmt.Errorf("failed to decode product: %w", err)
+		}
+		productPrices[product.ID] = product.Price
+	}
+
+	for i, item := range order.Items {
+		if price, found := productPrices[item.ProductID]; found {
+			order.Items[i].Price = price
+		} else {
+			return fmt.Errorf("price not found for product ID %v", item.ProductID)
+		}
+	}
+
+	var total float64
+	for _, item := range order.Items {
+		total += item.Price * float64(item.Quantity)
+	}
+	order.Total = total
+
+	_, err = r.collection.InsertOne(ctx, order)
 	return err
 }
 

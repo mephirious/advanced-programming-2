@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/mephirious/advanced-programming-2/inventory-service/config"
-	"github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/http/service"
+	"github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/grpc/service"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/repository"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/usecase"
 	"github.com/mephirious/advanced-programming-2/inventory-service/pkg/mongo"
@@ -18,7 +18,7 @@ import (
 const serviceName = "inventory-service"
 
 type App struct {
-	httpServer *service.API
+	grpcServer *service.GRPCServer
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
@@ -36,26 +36,26 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	categoryRepository := repository.NewCategoryRepository(mongoDB.Connection)
 	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
 
-	httpServer := service.New(cfg.Server, productUseCase, categoryUseCase)
-
-	app := &App{
-		httpServer: httpServer,
+	grpcServer, err := service.NewGRPCServer(*cfg, productUseCase, categoryUseCase)
+	if err != nil {
+		return nil, err
 	}
 
-	return app, nil
+	return &App{
+		grpcServer: grpcServer,
+	}, nil
 }
 
 func (a *App) Close() {
-	err := a.httpServer.Stop()
-	if err != nil {
-		log.Println("failed to shutdown http service", err)
-	}
+	a.grpcServer.Stop()
 }
 
 func (a *App) Run() error {
 	errCh := make(chan error, 1)
 
-	a.httpServer.Run(errCh)
+	go func() {
+		errCh <- a.grpcServer.Run()
+	}()
 
 	log.Printf("service %v started", serviceName)
 

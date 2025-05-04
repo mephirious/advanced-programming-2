@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  gateway-service:
+    build:
+      context: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "8003:8003"
+    environment:
+      - HTTP_PORT=8003
+      - INVENTORY_SERVICE=inventory-service:8001
+      - ORDER_SERVICE=order-service:8002
+      - INVENTORY_SERVICE_GRPC=inventory-service:8001
+      - ORDER_SERVICE_GRPC=order-service:8002
+    depends_on:
+      - inventory-service
+      - order-service
+
+  inventory-service:
+    build:
+      context: ./inventory-service
+    container_name: inventory-service
+    ports:
+      - "8001:8001"
+    environment:
+      - HTTP_PORT=8001
+      - GIN_MODE=release
+      - MONGO_DB=assignment
+      - MONGO_DB_URI=mongodb://mongo:27017
+      - MONGO_USERNAME=
+      - MONGO_PASSWORD=
+    depends_on:
+      - mongo
+
+  order-service:
+    build:
+      context: ./order-service
+    container_name: order-service
+    ports:
+      - "8002:8002"
+    environment:
+      - HTTP_PORT=8002
+      - GIN_MODE=release
+      - MONGO_DB=assignment
+      - MONGO_DB_URI=mongodb://mongo:27017
+      - MONGO_USERNAME=
+      - MONGO_PASSWORD=
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    ports:
+      - "27027:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

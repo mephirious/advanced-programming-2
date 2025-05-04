@@ -9,8 +9,7 @@ import (
 	"syscall"
 
 	"github.com/mephirious/advanced-programming-2/order-service/config"
-	"github.com/mephirious/advanced-programming-2/order-service/internal/adapter/http/service"
-	"github.com/mephirious/advanced-programming-2/order-service/internal/adapter/http/service/gateway"
+	"github.com/mephirious/advanced-programming-2/order-service/internal/adapter/grpc/service"
 	"github.com/mephirious/advanced-programming-2/order-service/internal/repository"
 	"github.com/mephirious/advanced-programming-2/order-service/internal/usecase"
 	"github.com/mephirious/advanced-programming-2/order-service/pkg/mongo"
@@ -19,57 +18,51 @@ import (
 const serviceName = "order-service"
 
 type App struct {
-	httpServer *service.API
+	grpcServer *service.GRPCServer
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
-	log.Printf("starting %v service", serviceName)
+	log.Printf("starting %s", serviceName)
 
-	log.Println("connecting to mongo", "database", cfg.Mongo.Database)
 	mongoDB, err := mongo.NewDB(ctx, cfg.Mongo)
 	if err != nil {
 		return nil, fmt.Errorf("mongo: %w", err)
 	}
 
-	gatewayClient := gateway.NewHTTPGateway(cfg.Server.GatewayService)
-	orderRepository := repository.NewOrderRepository(mongoDB.Connection)
-	orderUseCase := usecase.NewOrderUseCase(orderRepository, gatewayClient)
+	orderRepo := repository.NewOrderRepository(mongoDB.Connection)
+	orderUC := usecase.NewOrderUseCase(orderRepo)
 
-	httpServer := service.New(cfg.Server, orderUseCase)
-
-	app := &App{
-		httpServer: httpServer,
+	grpcServer, err := service.NewGRPCServer(*cfg, orderUC)
+	if err != nil {
+		return nil, err
 	}
 
-	return app, nil
+	return &App{grpcServer: grpcServer}, nil
 }
 
 func (a *App) Close() {
-	err := a.httpServer.Stop()
-	if err != nil {
-		log.Println("failed to shutdown http service", err)
-	}
+	a.grpcServer.Stop()
 }
 
 func (a *App) Run() error {
 	errCh := make(chan error, 1)
 
-	a.httpServer.Run(errCh)
+	go func() {
+		errCh <- a.grpcServer.Run()
+	}()
 
-	log.Printf("service %v started", serviceName)
+	log.Printf("%s started", serviceName)
 
 	shutdownCh := make(chan os.Signal, 1)
 	signal.Notify(shutdownCh, syscall.SIGINT, syscall.SIGTERM)
 
 	select {
-	case errRun := <-errCh:
-		return errRun
-
-	case s := <-shutdownCh:
-		log.Printf("received signal: %v. Running graceful shutdown...", s)
-
+	case err := <-errCh:
+		return err
+	case sig := <-shutdownCh:
+		log.Printf("received signal: %v. Gracefully shutting down...", sig)
 		a.Close()
-		log.Println("graceful shutdown completed!")
+		log.Println("shutdown completed")
 	}
 
 	return nil

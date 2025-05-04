@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package inventory;
+
+option go_package = "github.com/mephirious/advanced-programming-2/inventory-service/pkg/api/inventory;inventory";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// Product Messages
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string category_id = 4;
+  double price = 5;
+  int32 stock = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  string category_id = 3;
+  double price = 4;
+  int32 stock = 5;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional string category_id = 4;
+  optional double price = 5;
+  optional int32 stock = 6;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message GetByIDRequest {
+    string id = 1;
+}
+
+message ListProductsRequest {
+  optional string name = 1;
+  optional string category_id = 2;
+  optional double min_price = 3;
+  optional double max_price = 4;
+  optional int32 min_stock = 5;
+  optional int32 max_stock = 6;
+
+  // Pagination
+  int32 limit = 7;
+  int32 page = 8;
+
+  // Sorting
+  string sort_by = 9;
+  string sort_order = 10; // e.g., "asc" or "desc"
+}
+
+
+message ListProductsResponse {
+  repeated Product products = 1;
+}
+
+// Category Messages
+message Category {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message CreateCategoryRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message GetCategoryRequest {
+  string id = 1;
+}
+
+message UpdateCategoryRequest {
+  string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+}
+
+message DeleteCategoryRequest {
+  string id = 1;
+}
+
+message ListCategoriesRequest {
+  optional string name = 1;
+}
+
+message ListCategoriesResponse {
+  repeated Category categories = 1;
+}
+
+// Inventory Service Definition
+service InventoryService {
+  // Product RPCs
+  rpc CreateProduct (CreateProductRequest) returns (Product);
+  rpc GetProductByID (GetProductRequest) returns (Product);
+  rpc UpdateProduct (UpdateProductRequest) returns (Product);
+  rpc DeleteProduct (DeleteProductRequest) returns (google.protobuf.Empty);
+  rpc ListProducts (ListProductsRequest) returns (ListProductsResponse);
+
+  // Category RPCs
+  rpc CreateCategory (CreateCategoryRequest) returns (Category);
+  rpc GetCategoryByID (GetCategoryRequest) returns (Category);
+  rpc UpdateCategory (UpdateCategoryRequest) returns (Category);
+  rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
+  rpc ListCategories (ListCategoriesRequest) returns (ListCategoriesResponse);
+}
