@@ -16,6 +16,7 @@ import (
 
 	inventorypb "github.com/mephirious/advanced-programming-2/gateway-service/proto/inventory"
 	orderpb "github.com/mephirious/advanced-programming-2/gateway-service/proto/order"
+	statpb "github.com/mephirious/advanced-programming-2/gateway-service/proto/statistics"
 )
 
 func main() {
@@ -35,6 +36,13 @@ func main() {
 	}
 	defer inventoryConn.Close()
 	inventoryClient := inventorypb.NewInventoryServiceClient(inventoryConn)
+
+	statConn, err := grpc.NewClient(getEnv("STATISTICS_SERVICE_GRPC", "localhost:8004"), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Failed to connect to statistics service: %v", err)
+	}
+	defer statConn.Close()
+	statClient := statpb.NewStatisticsServiceClient(statConn)
 
 	r.POST("/api/v1/orders", func(c *gin.Context) {
 		var req orderpb.CreateOrderRequest
@@ -135,6 +143,20 @@ func main() {
 	r.GET("/api/v1/categories", func(c *gin.Context) {
 		res, err := inventoryClient.ListCategories(context.Background(), &inventorypb.ListCategoriesRequest{
 			Name: optional(c.Query("name")),
+		})
+		handleResponse(c, res, err)
+	})
+
+	r.GET("/api/v1/statistics/user-orders/:user_id", func(c *gin.Context) {
+		res, err := statClient.GetUserOrdersStatistics(context.Background(), &statpb.UserOrderStatisticsRequest{
+			UserId: c.Param("user_id"),
+		})
+		handleResponse(c, res, err)
+	})
+
+	r.GET("/api/v1/statistics/user/:user_id", func(c *gin.Context) {
+		res, err := statClient.GetUserStatistics(context.Background(), &statpb.UserStatisticsRequest{
+			UserId: c.Param("user_id"),
 		})
 		handleResponse(c, res, err)
 	})

@@ -16,6 +16,7 @@ services:
     depends_on:
       - inventory-service
       - order-service
+      - statistics-service
 
   inventory-service:
     build:
@@ -56,6 +57,32 @@ services:
       - "27027:27017"
     volumes:
       - mongo-data:/data/db
+
+  statistics-service:
+    build:
+      context: ./statistics-service
+    container_name: statistics-service
+    ports:
+      - "8004:8004"
+    environment:
+      - HTTP_PORT=8004
+      - GIN_MODE=release
+      - MONGO_DB=assignment
+      - MONGO_DB_URI=mongodb://mongo:27017
+      - MONGO_USERNAME=
+      - MONGO_PASSWORD=
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      - mongo
+      - nats
+
+  nats:
+    image: nats:latest
+    container_name: nats
+    ports:
+      - "4222:4222"
+    environment:
+      - NATS_SERVER=1
 
 volumes:
   mongo-data:
