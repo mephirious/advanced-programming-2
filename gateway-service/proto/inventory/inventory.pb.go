@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v3.21.12
-// source: inventory.proto
+// source: proto/inventory.proto
 
 package inventory
 
@@ -40,7 +40,7 @@ type Product struct {
 
 func (x *Product) Reset() {
 	*x = Product{}
-	mi := &file_inventory_proto_msgTypes[0]
+	mi := &file_proto_inventory_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -52,7 +52,7 @@ func (x *Product) String() string {
 func (*Product) ProtoMessage() {}
 
 func (x *Product) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[0]
+	mi := &file_proto_inventory_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -65,7 +65,7 @@ func (x *Product) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Product.ProtoReflect.Descriptor instead.
 func (*Product) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{0}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Product) GetId() string {
@@ -137,7 +137,7 @@ type CreateProductRequest struct {
 
 func (x *CreateProductRequest) Reset() {
 	*x = CreateProductRequest{}
-	mi := &file_inventory_proto_msgTypes[1]
+	mi := &file_proto_inventory_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -149,7 +149,7 @@ func (x *CreateProductRequest) String() string {
 func (*CreateProductRequest) ProtoMessage() {}
 
 func (x *CreateProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[1]
+	mi := &file_proto_inventory_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -162,7 +162,7 @@ func (x *CreateProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProductRequest.ProtoReflect.Descriptor instead.
 func (*CreateProductRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{1}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateProductRequest) GetName() string {
@@ -209,7 +209,7 @@ type GetProductRequest struct {
 
 func (x *GetProductRequest) Reset() {
 	*x = GetProductRequest{}
-	mi := &file_inventory_proto_msgTypes[2]
+	mi := &file_proto_inventory_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -221,7 +221,7 @@ func (x *GetProductRequest) String() string {
 func (*GetProductRequest) ProtoMessage() {}
 
 func (x *GetProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[2]
+	mi := &file_proto_inventory_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -234,7 +234,7 @@ func (x *GetProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProductRequest.ProtoReflect.Descriptor instead.
 func (*GetProductRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{2}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetProductRequest) GetId() string {
@@ -258,7 +258,7 @@ type UpdateProductRequest struct {
 
 func (x *UpdateProductRequest) Reset() {
 	*x = UpdateProductRequest{}
-	mi := &file_inventory_proto_msgTypes[3]
+	mi := &file_proto_inventory_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -270,7 +270,7 @@ func (x *UpdateProductRequest) String() string {
 func (*UpdateProductRequest) ProtoMessage() {}
 
 func (x *UpdateProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[3]
+	mi := &file_proto_inventory_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -283,7 +283,7 @@ func (x *UpdateProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProductRequest.ProtoReflect.Descriptor instead.
 func (*UpdateProductRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{3}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UpdateProductRequest) GetId() string {
@@ -337,7 +337,7 @@ type DeleteProductRequest struct {
 
 func (x *DeleteProductRequest) Reset() {
 	*x = DeleteProductRequest{}
-	mi := &file_inventory_proto_msgTypes[4]
+	mi := &file_proto_inventory_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -349,7 +349,7 @@ func (x *DeleteProductRequest) String() string {
 func (*DeleteProductRequest) ProtoMessage() {}
 
 func (x *DeleteProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[4]
+	mi := &file_proto_inventory_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -362,7 +362,7 @@ func (x *DeleteProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProductRequest.ProtoReflect.Descriptor instead.
 func (*DeleteProductRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{4}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DeleteProductRequest) GetId() string {
@@ -381,7 +381,7 @@ type GetByIDRequest struct {
 
 func (x *GetByIDRequest) Reset() {
 	*x = GetByIDRequest{}
-	mi := &file_inventory_proto_msgTypes[5]
+	mi := &file_proto_inventory_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -393,7 +393,7 @@ func (x *GetByIDRequest) String() string {
 func (*GetByIDRequest) ProtoMessage() {}
 
 func (x *GetByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[5]
+	mi := &file_proto_inventory_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -406,7 +406,7 @@ func (x *GetByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetByIDRequest.ProtoReflect.Descriptor instead.
 func (*GetByIDRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{5}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetByIDRequest) GetId() string {
@@ -436,7 +436,7 @@ type ListProductsRequest struct {
 
 func (x *ListProductsRequest) Reset() {
 	*x = ListProductsRequest{}
-	mi := &file_inventory_proto_msgTypes[6]
+	mi := &file_proto_inventory_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -448,7 +448,7 @@ func (x *ListProductsRequest) String() string {
 func (*ListProductsRequest) ProtoMessage() {}
 
 func (x *ListProductsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[6]
+	mi := &file_proto_inventory_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -461,7 +461,7 @@ func (x *ListProductsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProductsRequest.ProtoReflect.Descriptor instead.
 func (*ListProductsRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{6}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListProductsRequest) GetName() string {
@@ -543,7 +543,7 @@ type ListProductsResponse struct {
 
 func (x *ListProductsResponse) Reset() {
 	*x = ListProductsResponse{}
-	mi := &file_inventory_proto_msgTypes[7]
+	mi := &file_proto_inventory_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -555,7 +555,7 @@ func (x *ListProductsResponse) String() string {
 func (*ListProductsResponse) ProtoMessage() {}
 
 func (x *ListProductsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[7]
+	mi := &file_proto_inventory_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -568,7 +568,7 @@ func (x *ListProductsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProductsResponse.ProtoReflect.Descriptor instead.
 func (*ListProductsResponse) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{7}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListProductsResponse) GetProducts() []*Product {
@@ -592,7 +592,7 @@ type Category struct {
 
 func (x *Category) Reset() {
 	*x = Category{}
-	mi := &file_inventory_proto_msgTypes[8]
+	mi := &file_proto_inventory_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -604,7 +604,7 @@ func (x *Category) String() string {
 func (*Category) ProtoMessage() {}
 
 func (x *Category) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[8]
+	mi := &file_proto_inventory_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -617,7 +617,7 @@ func (x *Category) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Category.ProtoReflect.Descriptor instead.
 func (*Category) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{8}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Category) GetId() string {
@@ -665,7 +665,7 @@ type CreateCategoryRequest struct {
 
 func (x *CreateCategoryRequest) Reset() {
 	*x = CreateCategoryRequest{}
-	mi := &file_inventory_proto_msgTypes[9]
+	mi := &file_proto_inventory_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -677,7 +677,7 @@ func (x *CreateCategoryRequest) String() string {
 func (*CreateCategoryRequest) ProtoMessage() {}
 
 func (x *CreateCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[9]
+	mi := &file_proto_inventory_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -690,7 +690,7 @@ func (x *CreateCategoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCategoryRequest.ProtoReflect.Descriptor instead.
 func (*CreateCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{9}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CreateCategoryRequest) GetName() string {
@@ -716,7 +716,7 @@ type GetCategoryRequest struct {
 
 func (x *GetCategoryRequest) Reset() {
 	*x = GetCategoryRequest{}
-	mi := &file_inventory_proto_msgTypes[10]
+	mi := &file_proto_inventory_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -728,7 +728,7 @@ func (x *GetCategoryRequest) String() string {
 func (*GetCategoryRequest) ProtoMessage() {}
 
 func (x *GetCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[10]
+	mi := &file_proto_inventory_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -741,7 +741,7 @@ func (x *GetCategoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCategoryRequest.ProtoReflect.Descriptor instead.
 func (*GetCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{10}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetCategoryRequest) GetId() string {
@@ -762,7 +762,7 @@ type UpdateCategoryRequest struct {
 
 func (x *UpdateCategoryRequest) Reset() {
 	*x = UpdateCategoryRequest{}
-	mi := &file_inventory_proto_msgTypes[11]
+	mi := &file_proto_inventory_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -774,7 +774,7 @@ func (x *UpdateCategoryRequest) String() string {
 func (*UpdateCategoryRequest) ProtoMessage() {}
 
 func (x *UpdateCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[11]
+	mi := &file_proto_inventory_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -787,7 +787,7 @@ func (x *UpdateCategoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCategoryRequest.ProtoReflect.Descriptor instead.
 func (*UpdateCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{11}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UpdateCategoryRequest) GetId() string {
@@ -820,7 +820,7 @@ type DeleteCategoryRequest struct {
 
 func (x *DeleteCategoryRequest) Reset() {
 	*x = DeleteCategoryRequest{}
-	mi := &file_inventory_proto_msgTypes[12]
+	mi := &file_proto_inventory_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -832,7 +832,7 @@ func (x *DeleteCategoryRequest) String() string {
 func (*DeleteCategoryRequest) ProtoMessage() {}
 
 func (x *DeleteCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[12]
+	mi := &file_proto_inventory_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -845,7 +845,7 @@ func (x *DeleteCategoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCategoryRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{12}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *DeleteCategoryRequest) GetId() string {
@@ -864,7 +864,7 @@ type ListCategoriesRequest struct {
 
 func (x *ListCategoriesRequest) Reset() {
 	*x = ListCategoriesRequest{}
-	mi := &file_inventory_proto_msgTypes[13]
+	mi := &file_proto_inventory_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -876,7 +876,7 @@ func (x *ListCategoriesRequest) String() string {
 func (*ListCategoriesRequest) ProtoMessage() {}
 
 func (x *ListCategoriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[13]
+	mi := &file_proto_inventory_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -889,7 +889,7 @@ func (x *ListCategoriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCategoriesRequest.ProtoReflect.Descriptor instead.
 func (*ListCategoriesRequest) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{13}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListCategoriesRequest) GetName() string {
@@ -908,7 +908,7 @@ type ListCategoriesResponse struct {
 
 func (x *ListCategoriesResponse) Reset() {
 	*x = ListCategoriesResponse{}
-	mi := &file_inventory_proto_msgTypes[14]
+	mi := &file_proto_inventory_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -920,7 +920,7 @@ func (x *ListCategoriesResponse) String() string {
 func (*ListCategoriesResponse) ProtoMessage() {}
 
 func (x *ListCategoriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_inventory_proto_msgTypes[14]
+	mi := &file_proto_inventory_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -933,7 +933,7 @@ func (x *ListCategoriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCategoriesResponse.ProtoReflect.Descriptor instead.
 func (*ListCategoriesResponse) Descriptor() ([]byte, []int) {
-	return file_inventory_proto_rawDescGZIP(), []int{14}
+	return file_proto_inventory_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListCategoriesResponse) GetCategories() []*Category {
@@ -943,11 +943,11 @@ func (x *ListCategoriesResponse) GetCategories() []*Category {
 	return nil
 }
 
-var File_inventory_proto protoreflect.FileDescriptor
+var File_proto_inventory_proto protoreflect.FileDescriptor
 
-const file_inventory_proto_rawDesc = "" +
+const file_proto_inventory_proto_rawDesc = "" +
 	"\n" +
-	"\x0finventory.proto\x12\tinventory\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x92\x02\n" +
+	"\x15proto/inventory.proto\x12\tinventory\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x92\x02\n" +
 	"\aProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -1053,19 +1053,19 @@ const file_inventory_proto_rawDesc = "" +
 	"\x0eListCategories\x12 .inventory.ListCategoriesRequest\x1a!.inventory.ListCategoriesResponseB\\ZZgithub.com/mephirious/advanced-programming-2/inventory-service/pkg/api/inventory;inventoryb\x06proto3"
 
 var (
-	file_inventory_proto_rawDescOnce sync.Once
-	file_inventory_proto_rawDescData []byte
+	file_proto_inventory_proto_rawDescOnce sync.Once
+	file_proto_inventory_proto_rawDescData []byte
 )
 
-func file_inventory_proto_rawDescGZIP() []byte {
-	file_inventory_proto_rawDescOnce.Do(func() {
-		file_inventory_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_inventory_proto_rawDesc), len(file_inventory_proto_rawDesc)))
+func file_proto_inventory_proto_rawDescGZIP() []byte {
+	file_proto_inventory_proto_rawDescOnce.Do(func() {
+		file_proto_inventory_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_inventory_proto_rawDesc), len(file_proto_inventory_proto_rawDesc)))
 	})
-	return file_inventory_proto_rawDescData
+	return file_proto_inventory_proto_rawDescData
 }
 
-var file_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
-var file_inventory_proto_goTypes = []any{
+var file_proto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_proto_inventory_proto_goTypes = []any{
 	(*Product)(nil),                // 0: inventory.Product
 	(*CreateProductRequest)(nil),   // 1: inventory.CreateProductRequest
 	(*GetProductRequest)(nil),      // 2: inventory.GetProductRequest
@@ -1084,7 +1084,7 @@ var file_inventory_proto_goTypes = []any{
 	(*timestamppb.Timestamp)(nil),  // 15: google.protobuf.Timestamp
 	(*emptypb.Empty)(nil),          // 16: google.protobuf.Empty
 }
-var file_inventory_proto_depIdxs = []int32{
+var file_proto_inventory_proto_depIdxs = []int32{
 	15, // 0: inventory.Product.created_at:type_name -> google.protobuf.Timestamp
 	15, // 1: inventory.Product.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: inventory.ListProductsResponse.products:type_name -> inventory.Product
@@ -1118,30 +1118,30 @@ var file_inventory_proto_depIdxs = []int32{
 	0,  // [0:6] is the sub-list for field type_name
 }
 
-func init() { file_inventory_proto_init() }
-func file_inventory_proto_init() {
-	if File_inventory_proto != nil {
+func init() { file_proto_inventory_proto_init() }
+func file_proto_inventory_proto_init() {
+	if File_proto_inventory_proto != nil {
 		return
 	}
-	file_inventory_proto_msgTypes[3].OneofWrappers = []any{}
-	file_inventory_proto_msgTypes[6].OneofWrappers = []any{}
-	file_inventory_proto_msgTypes[11].OneofWrappers = []any{}
-	file_inventory_proto_msgTypes[13].OneofWrappers = []any{}
+	file_proto_inventory_proto_msgTypes[3].OneofWrappers = []any{}
+	file_proto_inventory_proto_msgTypes[6].OneofWrappers = []any{}
+	file_proto_inventory_proto_msgTypes[11].OneofWrappers = []any{}
+	file_proto_inventory_proto_msgTypes[13].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_inventory_proto_rawDesc), len(file_inventory_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_inventory_proto_rawDesc), len(file_proto_inventory_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_inventory_proto_goTypes,
-		DependencyIndexes: file_inventory_proto_depIdxs,
-		MessageInfos:      file_inventory_proto_msgTypes,
+		GoTypes:           file_proto_inventory_proto_goTypes,
+		DependencyIndexes: file_proto_inventory_proto_depIdxs,
+		MessageInfos:      file_proto_inventory_proto_msgTypes,
 	}.Build()
-	File_inventory_proto = out.File
-	file_inventory_proto_goTypes = nil
-	file_inventory_proto_depIdxs = nil
+	File_proto_inventory_proto = out.File
+	file_proto_inventory_proto_goTypes = nil
+	file_proto_inventory_proto_depIdxs = nil
 }

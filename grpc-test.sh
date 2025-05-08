@@ -74,7 +74,7 @@ SERVICE=order.OrderService
 
   echo "Creating Order..."
   grpcurl -plaintext -d '{
-    "user_id": "67f271f8807b59ec2efe8ab1",
+    "user_id": "67f271f8807b59ec2efe8ab2",
     "items": [
       {
         "product_id": "67f2efa1634fc1779d42c964",
@@ -104,3 +104,14 @@ grpcurl -plaintext -d '{
   "page": 1,
   "limit": 10
 }' $GRPC_SERVER $SERVICE/ListUserOrders
+
+
+67f271f8807b59ec2efe8ab1
+
+grpcurl -plaintext -d '{
+    "user_id": "67f271f8807b59ec2efe8ab1"
+  }' localhost:8004 statistics.StatisticsService/GetUserOrdersStatistics
+
+grpcurl -plaintext -d '{
+    "user_id": "67f271f8807b59ec2efe8ab1"
+  }' localhost:8004 statistics.StatisticsService/GetUserStatistics

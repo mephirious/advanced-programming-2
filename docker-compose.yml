@@ -13,6 +13,7 @@ services:
       - ORDER_SERVICE=order-service:8002
       - INVENTORY_SERVICE_GRPC=inventory-service:8001
       - ORDER_SERVICE_GRPC=order-service:8002
+      - STATISTICS_SERVICE_GRPC=statistics-service:8004
     depends_on:
       - inventory-service
       - order-service
