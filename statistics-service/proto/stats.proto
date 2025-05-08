@@ -2,45 +2,31 @@ syntax = "proto3";
 
 package statistics;
 
-option go_package = "github.com/mephirious/advanced-programming-2/statistics-service/proto;proto";
+option go_package = "github.com/mephirious/statistics-service/proto/statistics-service/proto;proto";
 
 import "google/protobuf/timestamp.proto";
 
-service StatisticsService {
-  rpc GetUserOrdersStatistics(UserOrderStatisticsRequest) returns (UserOrderStatisticsResponse);
-  rpc GetUserStatistics(UserStatisticsRequest) returns (UserStatisticsResponse);
-}
-
-message UserOrderStatisticsRequest {
-  string user_id = 1;
-}
-
-message UserOrderStatisticsResponse {
-  int32 total_orders = 1;
-  map<string, int32> hourly_distribution = 2;
-}
-
-message UserStatisticsRequest {
-  string user_id = 1;
-}
-
-message UserStatisticsResponse {
-  int32 total_items_purchased = 1;
-  double average_order_value = 2;
-  string most_purchased_item = 3;
-  int32 total_completed_orders = 4;
-}
-
 message OrderEvent {
-  string event_id = 1;
-  string operation = 2;  
-  string order_id = 3;
-  string user_id = 4;
-  repeated OrderItem items = 5;
-  double total = 6;
-  string status = 7;
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
+  string id = 1;
+  string user_id = 2;
+  repeated OrderItem items = 3;
+  double total = 4;
+  OrderStatus status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  OrderEventType event_type = 8;
+}
+
+message InventoryEvent {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string category_id = 4;
+  double price = 5;
+  int32 quantity = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  OrderEventType event_type = 9;
 }
 
 message OrderItem {
@@ -49,11 +35,42 @@ message OrderItem {
   double price = 3;
 }
 
-message InventoryEvent {
-  string event_id = 1;
-  string operation = 2;  
-  string product_id = 3;
-  int32 stock = 4;
-  double price = 5;
-  google.protobuf.Timestamp updated_at = 6;
+enum OrderStatus {
+  S_PENDING = 0;
+  S_COMPLETED = 1;
+  S_CANCELLED = 2;
+}
+
+enum OrderEventType {
+  CREATED = 0;
+  UPDATED = 1;
+  CANCELLED = 2;
+  DELETED = 3;
+}
+
+service StatisticsService {
+  rpc GetUserOrdersStatistics (UserOrderStatisticsRequest) returns (UserOrderStatisticsResponse);
+  rpc GetUserStatistics (UserStatisticsRequest) returns (UserStatisticsResponse);
+}
+
+message UserOrderStatisticsRequest {
+  string user_id = 1;
+}
+
+message UserOrderStatisticsResponse {
+  int32 total_orders = 1;
+  int32 total_completed_orders = 2;
+  int32 total_cancelled_orders = 3;
+  map<string, int32> hourly_distribution = 4;
+}
+
+message UserStatisticsRequest {
+  string user_id = 1;
+}
+
+message UserStatisticsResponse {
+  string user_id = 1;
+  int32 total_users = 2;
+  int32 user_order_count = 3;
+  int32 most_active_hour = 4;
 }

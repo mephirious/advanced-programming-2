@@ -10,8 +10,8 @@ import (
 type StatsUseCase interface {
 	HandleOrderEvent(ctx context.Context, event *domain.OrderEvent) error
 	HandleInventoryEvent(ctx context.Context, event *domain.InventoryEvent) error
-	GetUserOrderStatistics(ctx context.Context, userID string) (*domain.UserStatistics, error)
-	GetUserHourlyStatistics(ctx context.Context, userID string) (map[int]int, error)
+	GetUserOrderStatistics(ctx context.Context, userID string) (*domain.UserOrderStatistics, error)
+	GetUserHourlyOrderStatistics(ctx context.Context, userID string) (map[int]int, error)
 }
 
 type statsUseCase struct {
@@ -23,29 +23,36 @@ func NewStatsUseCase(repo repository.StatsRepository) StatsUseCase {
 }
 
 func (uc *statsUseCase) HandleOrderEvent(ctx context.Context, event *domain.OrderEvent) error {
+	if event == nil {
+		return nil
+	}
 	return uc.repo.SaveOrderEvent(ctx, event)
 }
 
 func (uc *statsUseCase) HandleInventoryEvent(ctx context.Context, event *domain.InventoryEvent) error {
+	if event == nil {
+		return nil
+	}
 	return uc.repo.SaveInventoryEvent(ctx, event)
 }
 
-func (uc *statsUseCase) GetUserOrderStatistics(ctx context.Context, userID string) (*domain.UserStatistics, error) {
+func (uc *statsUseCase) GetUserOrderStatistics(ctx context.Context, userID string) (*domain.UserOrderStatistics, error) {
 	return uc.repo.GetUserOrderStatistics(ctx, userID)
 }
 
-func (uc *statsUseCase) GetUserHourlyStatistics(ctx context.Context, userID string) (map[int]int, error) {
-	events, err := uc.repo.GetUserOrderStats(ctx, userID)
+func (uc *statsUseCase) GetUserHourlyOrderStatistics(ctx context.Context, userID string) (map[int]int, error) {
+	orders, err := uc.repo.GetUserOrderEvents(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 
 	hourlyStats := make(map[int]int)
-	for _, event := range events {
-		if event.Status == "completed" {
-			hour := event.CreatedAt.Hour()
+	for _, order := range orders {
+		if order.Status == domain.OrderStatusCompleted {
+			hour := order.CreatedAt.Hour()
 			hourlyStats[hour]++
 		}
 	}
+
 	return hourlyStats, nil
 }

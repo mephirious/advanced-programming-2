@@ -2,90 +2,102 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/mephirious/advanced-programming-2/statistics-service/internal/domain"
-	"github.com/mephirious/advanced-programming-2/statistics-service/internal/repository/dao"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type StatsRepository struct {
-	orderDAO     dao.OrderDAO
-	inventoryDAO dao.InventoryDAO
+type mongoStatsRepository struct {
+	orderCol     *mongo.Collection
+	inventoryCol *mongo.Collection
 }
 
-func NewStatsRepository(orderDAO dao.OrderDAO, inventoryDAO dao.InventoryDAO) *StatsRepository {
-	return &StatsRepository{
-		orderDAO:     orderDAO,
-		inventoryDAO: inventoryDAO,
+func NewMongoStatsRepository(db *mongo.Database) StatsRepository {
+	return &mongoStatsRepository{
+		orderCol:     db.Collection("order_events"),
+		inventoryCol: db.Collection("inventory_events"),
 	}
 }
 
-func (r *StatsRepository) SaveOrderEvent(ctx context.Context, event *domain.OrderEvent) error {
-	_, err := r.orderDAO.Insert(ctx, event)
-	return err
-}
-
-func (r *StatsRepository) SaveInventoryEvent(ctx context.Context, event *domain.InventoryEvent) error {
-	_, err := r.inventoryDAO.Insert(ctx, event)
-	return err
-}
-
-func (r *StatsRepository) GetUserOrderStats(ctx context.Context, userID string) ([]domain.OrderEvent, error) {
-	return r.orderDAO.Find(ctx, bson.M{"user_id": userID})
-}
-
-func (r *StatsRepository) GetUserOrderStatistics(ctx context.Context, userID string) (*domain.UserStatistics, error) {
-	pipeline := mongo.Pipeline{
-		{{"$match", bson.D{
-			{"user_id", userID},
-			{"status", "completed"},
-		}}},
-		{{"$unwind", "$items"}},
-		{{"$group", bson.D{
-			{"_id", "$items.product_id"},
-			{"total_quantity", bson.D{{"$sum", "$items.quantity"}}},
-			{"total_orders", bson.D{{"$sum", 1}}},
-			{"total_spent", bson.D{{"$sum", "$total"}}},
-		}}},
-		{{"$sort", bson.D{{"total_quantity", -1}}}},
-		{{"$limit", 1}},
-	}
-
-	cursor, err := r.orderDAO.Aggregate(ctx, pipeline)
+func (r *mongoStatsRepository) SaveOrderEvent(ctx context.Context, event *domain.OrderEvent) error {
+	result, err := r.orderCol.InsertOne(ctx, event)
 	if err != nil {
-		return nil, fmt.Errorf("aggregation failed: %w", err)
+		log.Printf("Failed to save order event: %v", err)
+		return err
+	}
+	log.Printf("Saved order event: %v", result.InsertedID)
+	return nil
+}
+
+func (r *mongoStatsRepository) SaveInventoryEvent(ctx context.Context, event *domain.InventoryEvent) error {
+	result, err := r.inventoryCol.InsertOne(ctx, event)
+	if err != nil {
+		log.Printf("Failed to save inventory event: %v", err)
+		return err
+	}
+	log.Printf("Saved inventory event: %v", result.InsertedID)
+	return nil
+}
+
+func (r *mongoStatsRepository) GetUserOrderStatistics(ctx context.Context, userID string) (*domain.UserOrderStatistics, error) {
+	stats := &domain.UserOrderStatistics{
+		UserID:        userID,
+		OrdersPerHour: make(map[int]int),
+	}
+
+	filter := bson.M{"userid": userID}
+	cursor, err := r.orderCol.Find(ctx, filter)
+	if err != nil {
+		log.Printf("Failed to query order events: %v", err)
+		return nil, err
 	}
 	defer cursor.Close(ctx)
 
-	var result struct {
-		ProductID   string  `bson:"_id"`
-		TotalQty    int     `bson:"total_quantity"`
-		TotalOrders int     `bson:"total_orders"`
-		TotalSpent  float64 `bson:"total_spent"`
-	}
-
-	stats := &domain.UserStatistics{
-		UserID: userID,
-	}
-
-	if cursor.Next(ctx) {
-		if err := cursor.Decode(&result); err != nil {
-			return nil, fmt.Errorf("failed to decode aggregation result: %w", err)
+	for cursor.Next(ctx) {
+		var evt domain.OrderEvent
+		if err := cursor.Decode(&evt); err != nil {
+			log.Printf("Failed to decode order event: %v", err)
+			continue
 		}
-		stats.MostPurchasedItem = result.ProductID
-		stats.TotalItemsPurchased = result.TotalQty
-		if result.TotalOrders > 0 {
-			stats.AverageOrderValue = result.TotalSpent / float64(result.TotalOrders)
+		stats.TotalOrders++
+		hour := evt.CreatedAt.Hour()
+		stats.OrdersPerHour[hour]++
+
+		switch evt.Status {
+		case "S_COMPLETED":
+			stats.TotalCompletedOrders++
+		case "S_CANCELLED":
+			stats.TotalCancelledOrders++
 		}
 	}
 
-	totalOrders, err := r.orderDAO.Find(ctx, bson.M{"user_id": userID})
-	if err != nil {
-		return nil, fmt.Errorf("failed to get total orders: %w", err)
+	if err := cursor.Err(); err != nil {
+		log.Printf("Cursor error: %v", err)
+		return nil, err
 	}
-	stats.TotalOrders = len(totalOrders)
 
 	return stats, nil
+}
+
+func (r *mongoStatsRepository) GetUserOrderEvents(ctx context.Context, userID string) ([]*domain.OrderEvent, error) {
+	filter := bson.M{"userid": userID}
+	cursor, err := r.orderCol.Find(ctx, filter)
+	if err != nil {
+		log.Printf("Failed to query order events: %v", err)
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var events []*domain.OrderEvent
+	for cursor.Next(ctx) {
+		var evt domain.OrderEvent
+		if err := cursor.Decode(&evt); err != nil {
+			log.Printf("Failed to decode order event: %v", err)
+			continue
+		}
+		events = append(events, &evt)
+	}
+	return events, nil
 }

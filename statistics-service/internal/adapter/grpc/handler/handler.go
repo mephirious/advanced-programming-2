@@ -30,13 +30,15 @@ func (h *GRPCHandler) GetUserOrdersStatistics(ctx context.Context, req *pb.UserO
 	}
 
 	hourly := make(map[string]int32)
-	for hour, count := range stats.HourlyDistribution {
+	for hour, count := range stats.OrdersPerHour {
 		hourly[formatHour(hour)] = int32(count)
 	}
 
 	return &pb.UserOrderStatisticsResponse{
-		TotalOrders:        int32(stats.TotalOrders),
-		HourlyDistribution: hourly,
+		TotalOrders:          int32(stats.TotalOrders),
+		TotalCompletedOrders: int32(stats.TotalCompletedOrders),
+		TotalCancelledOrders: int32(stats.TotalCancelledOrders),
+		HourlyDistribution:   hourly,
 	}, nil
 }
 
@@ -50,11 +52,20 @@ func (h *GRPCHandler) GetUserStatistics(ctx context.Context, req *pb.UserStatist
 		return nil, status.Errorf(codes.Internal, "failed to get user stats: %v", err)
 	}
 
+	var mostActiveHour int
+	maxOrders := 0
+	for hour, count := range stats.OrdersPerHour {
+		if count > maxOrders {
+			maxOrders = count
+			mostActiveHour = hour
+		}
+	}
+
 	return &pb.UserStatisticsResponse{
-		TotalItemsPurchased:  int32(stats.TotalItemsPurchased),
-		AverageOrderValue:    stats.AverageOrderValue,
-		MostPurchasedItem:    stats.MostPurchasedItem,
-		TotalCompletedOrders: int32(stats.CompletedOrders),
+		UserId:         req.UserId,
+		TotalUsers:     int32(stats.TotalOrders),
+		UserOrderCount: int32(stats.TotalOrders),
+		MostActiveHour: int32(mostActiveHour),
 	}, nil
 }
 

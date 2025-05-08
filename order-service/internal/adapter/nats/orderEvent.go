@@ -22,10 +22,7 @@ type OrderEventProducer struct {
 	subject    string
 }
 
-func NewOrderEventProducer(
-	natsClient *nats.Client,
-	subject string,
-) *OrderEventProducer {
+func NewOrderEventProducer(natsClient *nats.Client, subject string) *OrderEventProducer {
 	return &OrderEventProducer{
 		natsClient: natsClient,
 		subject:    subject,
@@ -33,7 +30,7 @@ func NewOrderEventProducer(
 }
 
 func (p *OrderEventProducer) Push(ctx context.Context, event *domain.Order, eventType pb.OrderEventType) error {
-	_, cancel := context.WithTimeout(ctx, PushTimeout)
+	ctx, cancel := context.WithTimeout(ctx, PushTimeout)
 	defer cancel()
 
 	pbEvent := dto.ToOrderEvent(event, eventType)
@@ -42,11 +39,12 @@ func (p *OrderEventProducer) Push(ctx context.Context, event *domain.Order, even
 		return fmt.Errorf("proto.Marshal: %w", err)
 	}
 
+	log.Printf("Publishing to subject: %s, event: %+v", p.subject, pbEvent)
 	err = p.natsClient.Conn.Publish(p.subject, data)
 	if err != nil {
 		return fmt.Errorf("p.natsClient.Conn.Publish: %w", err)
 	}
-	log.Printf("Order event is pushed: %+v [%s]", event, eventType)
+	log.Printf("Order event pushed to %s: %+v [%s]", p.subject, event, eventType)
 
 	return nil
 }

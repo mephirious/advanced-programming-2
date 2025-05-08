@@ -10,12 +10,11 @@ import (
 
 	"github.com/mephirious/advanced-programming-2/statistics-service/config"
 	"github.com/mephirious/advanced-programming-2/statistics-service/internal/adapter/grpc"
-	"github.com/mephirious/advanced-programming-2/statistics-service/internal/adapter/nats/handler"
+	handler "github.com/mephirious/advanced-programming-2/statistics-service/internal/adapter/nats/handler"
 	"github.com/mephirious/advanced-programming-2/statistics-service/internal/repository"
-	"github.com/mephirious/advanced-programming-2/statistics-service/internal/repository/dao"
 	"github.com/mephirious/advanced-programming-2/statistics-service/internal/usecase"
 	"github.com/mephirious/advanced-programming-2/statistics-service/pkg/mongo"
-	"github.com/nats-io/nats.go"
+	nats "github.com/mephirious/advanced-programming-2/statistics-service/pkg/nats"
 )
 
 const serviceName = "statistics-service"
@@ -24,7 +23,7 @@ type App struct {
 	grpcServer  *grpc.Server
 	natsHandler *handler.NATSHandler
 	mongoDB     *mongo.DB
-	natsConn    *nats.Conn
+	natsConn    *nats.Client
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
@@ -42,17 +41,15 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("nats connection failed: %w", err)
 	}
 
-	orderDAO := dao.NewOrderDAO(mongoDB.Connection)
-	inventoryDAO := dao.NewInventoryDAO(mongoDB.Connection)
-	repo := repository.NewStatsRepository(orderDAO, inventoryDAO)
-	uc := usecase.NewStatsUseCase(*repo)
+	repo := repository.NewMongoStatsRepository(mongoDB.Connection)
+	uc := usecase.NewStatsUseCase(repo)
 
 	grpcServer, err := grpc.NewServer(cfg.Server.GRPCServer.Port, uc)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create gRPC server: %w", err)
 	}
 
-	natsHandler := handler.NewNATSHandler(nc, uc)
+	natsHandler := handler.NewNATSHandler(uc, nc.Conn)
 
 	return &App{
 		grpcServer:  grpcServer,
@@ -68,9 +65,11 @@ func (a *App) Close() {
 }
 
 func (a *App) Run() error {
-	errCh := make(chan error, 1)
-
-	go a.natsHandler.Start()
+	go func() {
+		if err := a.natsHandler.Start(); err != nil {
+			log.Fatalf("NATS handler failed: %v", err)
+		}
+	}()
 
 	go func() {
 		if err := a.grpcServer.Start(); err != nil {
@@ -84,9 +83,6 @@ func (a *App) Run() error {
 	signal.Notify(shutdownCh, syscall.SIGINT, syscall.SIGTERM)
 
 	select {
-	case errRun := <-errCh:
-		return errRun
-
 	case s := <-shutdownCh:
 		log.Printf("received signal: %v. Running graceful shutdown...", s)
 		a.Close()

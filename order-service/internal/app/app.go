@@ -37,7 +37,7 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	if err != nil {
 		return nil, fmt.Errorf("nats.NewClient: %w", err)
 	}
-	orderProducer := producer.NewOrderEventProducer(natsClient, "inventory.events")
+	orderProducer := producer.NewOrderEventProducer(natsClient, "order.events")
 
 	orderRepo := repository.NewOrderRepository(mongoDB.Connection)
 	orderUC := usecase.NewOrderUseCase(orderRepo, *orderProducer)

@@ -104,5 +104,3 @@ grpcurl -plaintext -d '{
   "page": 1,
   "limit": 10
 }' $GRPC_SERVER $SERVICE/ListUserOrders
-
-echo -e "\nDone."
