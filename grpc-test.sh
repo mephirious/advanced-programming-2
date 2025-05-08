@@ -4,6 +4,7 @@
 GRPC_SERVER=localhost:8001
 SERVICE=inventory.InventoryService
 
+
 echo "Creating Product..."
 grpcurl -plaintext -d '{
   "name": "Smartphone",
@@ -36,7 +37,7 @@ grpcurl -plaintext -d '{
   "page": 1,
   "sort_by": "price",
   "sort_order": "asc"
-}' $GRPC_SERVER $SERVICE/ListProducts
+}' $GRPC_SERVER $SERVICE/ListProduct
 
 echo -e "\nCreating Category..."
 grpcurl -plaintext -d '{
@@ -65,3 +66,43 @@ grpcurl -plaintext -d '{}' $GRPC_SERVER $SERVICE/ListCategories
 
 echo -e "\nDone."
 
+
+#!/bin/bash
+
+GRPC_SERVER=localhost:8002
+SERVICE=order.OrderService
+
+  echo "Creating Order..."
+  grpcurl -plaintext -d '{
+    "user_id": "67f271f8807b59ec2efe8ab1",
+    "items": [
+      {
+        "product_id": "67f2efa1634fc1779d42c964",
+        "quantity": 2
+      },
+      {
+        "product_id": "67f27ebc364656484b26e7f7",
+        "quantity": 1
+      }
+    ]
+  }' $GRPC_SERVER $SERVICE/CreateOrder
+
+echo -e "\nGetting Order By ID..."
+grpcurl -plaintext -d '{
+  "id": "681c5a19cb5964c723ac8006"
+}' $GRPC_SERVER $SERVICE/GetOrderByID
+
+echo -e "\nUpdating Order Status..."
+grpcurl -plaintext -d '{
+  "id": "681c5a19cb5964c723ac8006",
+  "status": "COMPLETED"
+}' $GRPC_SERVER $SERVICE/UpdateOrderStatus
+
+echo -e "\nListing Orders for User..."
+grpcurl -plaintext -d '{
+  "user_id": "67f271f8807b59ec2efe8ab1",
+  "page": 1,
+  "limit": 10
+}' $GRPC_SERVER $SERVICE/ListUserOrders
+
+echo -e "\nDone."

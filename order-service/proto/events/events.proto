@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package events;
+
+option go_package = "github.com/mephirious/advanced-programming-2/order-service/pkg/api/events;events";
+
+import "google/protobuf/timestamp.proto";
+
+enum OrderEventType {
+  CREATED = 0;
+  UPDATED = 1;
+  CANCELLED = 2;
+  DELETED = 3;
+}
+
+message OrderEvent {
+  string id = 1;
+  string user_id = 2;
+  repeated OrderItem items = 3;
+  double total = 4;
+  OrderStatus status = 5; 
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  OrderEventType event_type = 8;
+}
+
+message OrderItem {
+  string product_id = 1;
+  int32 quantity = 2;
+  double price = 3;
+}
+
+enum OrderStatus {
+  S_PENDING = 0;
+  S_COMPLETED = 1;
+  S_CANCELLED = 2;
+}

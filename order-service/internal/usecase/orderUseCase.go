@@ -4,10 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"strings"
 
+	producer "github.com/mephirious/advanced-programming-2/order-service/internal/adapter/nats"
 	"github.com/mephirious/advanced-programming-2/order-service/internal/domain"
 	"github.com/mephirious/advanced-programming-2/order-service/internal/domain/dto"
 	"github.com/mephirious/advanced-programming-2/order-service/internal/repository"
+	pbOrder "github.com/mephirious/advanced-programming-2/order-service/proto"
+	pb "github.com/mephirious/advanced-programming-2/order-service/proto/events"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,12 +24,14 @@ type OrderUseCase interface {
 }
 
 type orderUseCase struct {
-	orderRepo repository.OrderRepository
+	orderRepo     repository.OrderRepository
+	eventProducer producer.OrderEventProducer
 }
 
-func NewOrderUseCase(repo repository.OrderRepository) *orderUseCase {
+func NewOrderUseCase(repo repository.OrderRepository, eventProducer producer.OrderEventProducer) *orderUseCase {
 	return &orderUseCase{
-		orderRepo: repo,
+		orderRepo:     repo,
+		eventProducer: eventProducer,
 	}
 }
 
@@ -62,6 +69,10 @@ func (uc *orderUseCase) CreateOrder(ctx context.Context, dto dto.OrderCreateDTO)
 		return nil, fmt.Errorf("failed to create order: %w", err)
 	}
 
+	if err := uc.eventProducer.Push(ctx, order, pb.OrderEventType_CREATED); err != nil {
+		log.Printf("Failed to push create event to NATS: %v", err)
+	}
+
 	return order, nil
 }
 
@@ -88,7 +99,8 @@ func (uc *orderUseCase) UpdateOrderStatus(ctx context.Context, id string, status
 		return nil, fmt.Errorf("invalid order ID: %w", err)
 	}
 
-	orderStatus := domain.OrderStatus(status)
+	normalized := strings.ToLower(status)
+	orderStatus := domain.OrderStatus(normalized)
 	switch orderStatus {
 	case domain.OrderStatusPending, domain.OrderStatusCompleted, domain.OrderStatusCancelled:
 	default:
@@ -99,7 +111,19 @@ func (uc *orderUseCase) UpdateOrderStatus(ctx context.Context, id string, status
 		return nil, fmt.Errorf("failed to update order status: %w", err)
 	}
 
-	return uc.orderRepo.GetOrderByID(ctx, orderID)
+	order, err := uc.orderRepo.GetOrderByID(ctx, orderID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch updated order: %w", err)
+	}
+	if order == nil {
+		return nil, errors.New("order not found after update")
+	}
+
+	if err := uc.eventProducer.Push(ctx, order, pb.OrderEventType_UPDATED); err != nil {
+		log.Printf("Failed to push update event to NATS: %v", err)
+	}
+
+	return order, nil
 }
 
 func (uc *orderUseCase) GetOrders(ctx context.Context, filter dto.OrderFilterDTO) ([]domain.Order, error) {
@@ -114,4 +138,17 @@ func (uc *orderUseCase) GetOrders(ctx context.Context, filter dto.OrderFilterDTO
 	}
 
 	return uc.orderRepo.GetOrders(ctx, filter)
+}
+
+func ParseOrderStatus(statusStr string) (pbOrder.OrderStatus, error) {
+	switch statusStr {
+	case "PENDING":
+		return pbOrder.OrderStatus_PENDING, nil
+	case "COMPLETED":
+		return pbOrder.OrderStatus_COMPLETED, nil
+	case "CANCELLED":
+		return pbOrder.OrderStatus_CANCELLED, nil
+	default:
+		return pbOrder.OrderStatus_PENDING, fmt.Errorf("invalid order status")
+	}
 }
