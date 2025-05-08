@@ -20,14 +20,14 @@ grpcurl -plaintext -d '{
 
 echo -e "\nUpdating Product..."
 grpcurl -plaintext -d '{
-  "id": "67f27264807b59ec2efe8ab6",
+  "id": "681c4cc31fb89e229e153ae2",
   "price": 899.99,
   "stock": 100
 }' $GRPC_SERVER $SERVICE/UpdateProduct
 
 echo -e "\nDeleting Product..."
 grpcurl -plaintext -d '{
-  "id": "67f27264807b59ec2efe8ab6"
+  "id": "681c4cc31fb89e229e153ae2"
 }' $GRPC_SERVER $SERVICE/DeleteProduct
 
 echo -e "\nListing Products..."

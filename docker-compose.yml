@@ -29,6 +29,7 @@ services:
       - GIN_MODE=release
       - MONGO_DB=assignment
       - MONGO_DB_URI=mongodb://mongo:27017
+      - NATS_URL=nats://nats:4222
       - MONGO_USERNAME=
       - MONGO_PASSWORD=
     depends_on:

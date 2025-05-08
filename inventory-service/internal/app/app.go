@@ -10,15 +10,19 @@ import (
 
 	"github.com/mephirious/advanced-programming-2/inventory-service/config"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/grpc/service"
+	producer "github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/nats"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/repository"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/usecase"
 	"github.com/mephirious/advanced-programming-2/inventory-service/pkg/mongo"
+	"github.com/mephirious/advanced-programming-2/inventory-service/pkg/nats"
 )
 
 const serviceName = "inventory-service"
 
 type App struct {
-	grpcServer *service.GRPCServer
+	grpcServer    *service.GRPCServer
+	natsClient    *nats.Client
+	inventoryProd *producer.InventoryEventProducer
 }
 
 func New(ctx context.Context, cfg *config.Config) (*App, error) {
@@ -30,8 +34,14 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("mongo: %w", err)
 	}
 
+	natsClient, err := nats.NewClient(cfg.NATS.URL)
+	if err != nil {
+		return nil, fmt.Errorf("nats.NewClient: %w", err)
+	}
+	inventoryProducer := producer.NewInventoryEventProducer(natsClient, "inventory.events")
+
 	productRepository := repository.NewProductRepository(mongoDB.Connection)
-	productUseCase := usecase.NewProductUseCase(productRepository)
+	productUseCase := usecase.NewProductUseCase(productRepository, inventoryProducer)
 
 	categoryRepository := repository.NewCategoryRepository(mongoDB.Connection)
 	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
@@ -42,7 +52,9 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 	}
 
 	return &App{
-		grpcServer: grpcServer,
+		grpcServer:    grpcServer,
+		natsClient:    natsClient,
+		inventoryProd: inventoryProducer,
 	}, nil
 }
 

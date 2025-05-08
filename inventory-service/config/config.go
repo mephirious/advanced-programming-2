@@ -13,6 +13,7 @@ import (
 type (
 	Config struct {
 		Mongo  mongo.Config
+		NATS   NATSConfig
 		Server Server
 	}
 
@@ -23,6 +24,10 @@ type (
 	GRPCServer struct {
 		Port int    `env:"GRPC_PORT,required"`
 		Mode string `env:"GIN_MODE" envDefault:"release"`
+	}
+
+	NATSConfig struct {
+		URL string `env:"NATS_URL,required"`
 	}
 )
 
@@ -53,6 +58,8 @@ func New() (*Config, error) {
 	cfg.Mongo.URI = os.Getenv("MONGO_DB_URI")
 	cfg.Mongo.Username = os.Getenv("MONGO_USERNAME")
 	cfg.Mongo.Password = os.Getenv("MONGO_PASSWORD")
+
+	cfg.NATS.URL = os.Getenv("NATS_URL")
 
 	return &cfg, nil
 }

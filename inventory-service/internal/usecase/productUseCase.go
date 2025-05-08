@@ -3,10 +3,13 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"log"
 
+	producer "github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/nats"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain/dto"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/repository"
+	pb "github.com/mephirious/advanced-programming-2/inventory-service/proto/events"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,12 +22,14 @@ type ProductUseCase interface {
 }
 
 type productUseCase struct {
-	productRepo repository.ProductRepository
+	productRepo   repository.ProductRepository
+	eventProducer *producer.InventoryEventProducer
 }
 
-func NewProductUseCase(repo repository.ProductRepository) *productUseCase {
+func NewProductUseCase(repo repository.ProductRepository, eventProducer *producer.InventoryEventProducer) *productUseCase {
 	return &productUseCase{
-		productRepo: repo,
+		productRepo:   repo,
+		eventProducer: eventProducer,
 	}
 }
 
@@ -45,6 +50,10 @@ func (uc *productUseCase) CreateProduct(ctx context.Context, dto dto.ProductCrea
 
 	if err := uc.productRepo.CreateProduct(ctx, product); err != nil {
 		return nil, err
+	}
+
+	if err := uc.eventProducer.Push(ctx, product, pb.InventoryEventType_CREATED); err != nil {
+		log.Printf("Failed to push create event to NATS: %v", err)
 	}
 
 	return product, nil
@@ -97,11 +106,29 @@ func (uc *productUseCase) UpdateProduct(ctx context.Context, id primitive.Object
 		return nil, err
 	}
 
+	if err := uc.eventProducer.Push(ctx, product, pb.InventoryEventType_UPDATED); err != nil {
+		log.Printf("Failed to push create event to NATS: %v", err)
+	}
+
 	return p1roduct, nil
 }
 
 func (uc *productUseCase) DeleteProduct(ctx context.Context, id primitive.ObjectID) error {
-	return uc.productRepo.DeleteProduct(ctx, id)
+	product, err := uc.productRepo.GetProductByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	err = uc.productRepo.DeleteProduct(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if err := uc.eventProducer.Push(ctx, product, pb.InventoryEventType_DELETED); err != nil {
+		log.Printf("Failed to push delete event to NATS: %v", err)
+	}
+
+	return nil
 }
 
 func (uc *productUseCase) GetAllProducts(ctx context.Context, filter dto.ProductFilterDTO) ([]domain.Product, error) {

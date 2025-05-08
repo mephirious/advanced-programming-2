@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package events;
+
+option go_package = "github.com/mephirious/advanced-programming-2/inventory-service/pkg/api/events;events";
+
+import "google/protobuf/timestamp.proto";
+
+enum InventoryEventType {
+  CREATED = 0;
+  UPDATED = 1;
+  DELETED = 2;
+}
+
+message InventoryEvent {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string category_id = 4;
+  double price = 5;
+  int32 stock = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  InventoryEventType event_type = 9;
+}
