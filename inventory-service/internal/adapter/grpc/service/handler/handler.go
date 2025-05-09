@@ -56,6 +56,20 @@ func (h *InventoryHandler) GetProductByID(ctx context.Context, req *inventory.Ge
 	return mapProductToProto(product), nil
 }
 
+func (h *InventoryHandler) GetProductByIDFromCache(ctx context.Context, req *inventory.GetProductByIDFromCacheRequest) (*inventory.Product, error) {
+	id, err := primitive.ObjectIDFromHex(req.GetId())
+	if err != nil {
+		return nil, err
+	}
+
+	product, err := h.productUC.GetProductByIDFromCache(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapProductToProto(product), nil
+}
+
 func (h *InventoryHandler) UpdateProduct(ctx context.Context, req *inventory.UpdateProductRequest) (*inventory.Product, error) {
 	id, err := primitive.ObjectIDFromHex(req.GetId())
 	if err != nil {
@@ -118,7 +132,19 @@ func (h *InventoryHandler) ListProducts(ctx context.Context, req *inventory.List
 	}, nil
 }
 
-// Utility Functions
+func (h *InventoryHandler) GetAllProductsFromCache(ctx context.Context, req *inventory.GetAllProductsFromCacheRequest) (*inventory.GetAllProductsFromCacheResponse, error) {
+	products := h.productUC.GetAllProductsFromCache(ctx)
+
+	var protoProducts []*inventory.Product
+	for _, product := range products {
+		protoProducts = append(protoProducts, mapProductToProto(&product))
+	}
+
+	return &inventory.GetAllProductsFromCacheResponse{
+		Products: protoProducts,
+	}, nil
+}
+
 func optionalString(s string) *string {
 	if s == "" {
 		return nil
@@ -140,7 +166,6 @@ func optionalInt32(i int32) *int32 {
 	return &i
 }
 
-// Proto Mappers
 func mapProductToProto(p *domain.Product) *inventory.Product {
 	return &inventory.Product{
 		Id:          p.ID.Hex(),

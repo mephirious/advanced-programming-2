@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/cache"
 	producer "github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/nats"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/domain/dto"
@@ -19,17 +20,22 @@ type ProductUseCase interface {
 	UpdateProduct(ctx context.Context, id primitive.ObjectID, dto dto.ProductUpdateDTO) (*domain.Product, error)
 	DeleteProduct(ctx context.Context, id primitive.ObjectID) error
 	GetAllProducts(ctx context.Context, filter dto.ProductFilterDTO) ([]domain.Product, error)
+
+	GetProductByIDFromCache(ctx context.Context, id primitive.ObjectID) (*domain.Product, error)
+	GetAllProductsFromCache(ctx context.Context) []domain.Product
 }
 
 type productUseCase struct {
 	productRepo   repository.ProductRepository
 	eventProducer *producer.InventoryEventProducer
+	productCache  *cache.ProductCache
 }
 
-func NewProductUseCase(repo repository.ProductRepository, eventProducer *producer.InventoryEventProducer) *productUseCase {
+func NewProductUseCase(repo repository.ProductRepository, eventProducer *producer.InventoryEventProducer, productCache *cache.ProductCache) *productUseCase {
 	return &productUseCase{
 		productRepo:   repo,
 		eventProducer: eventProducer,
+		productCache:  productCache,
 	}
 }
 
@@ -55,6 +61,8 @@ func (uc *productUseCase) CreateProduct(ctx context.Context, dto dto.ProductCrea
 	if err := uc.eventProducer.Push(ctx, product, pb.InventoryEventType_CREATED); err != nil {
 		log.Printf("Failed to push create event to NATS: %v", err)
 	}
+
+	uc.productCache.Set(*product)
 
 	return product, nil
 }
@@ -110,6 +118,8 @@ func (uc *productUseCase) UpdateProduct(ctx context.Context, id primitive.Object
 		log.Printf("Failed to push create event to NATS: %v", err)
 	}
 
+	uc.productCache.Set(*product)
+
 	return p1roduct, nil
 }
 
@@ -133,4 +143,16 @@ func (uc *productUseCase) DeleteProduct(ctx context.Context, id primitive.Object
 
 func (uc *productUseCase) GetAllProducts(ctx context.Context, filter dto.ProductFilterDTO) ([]domain.Product, error) {
 	return uc.productRepo.GetAllProducts(ctx, filter)
+}
+
+func (uc *productUseCase) GetProductByIDFromCache(ctx context.Context, id primitive.ObjectID) (*domain.Product, error) {
+	product, ok := uc.productCache.Get(id.Hex())
+	if ok == false {
+		return nil, fmt.Errorf("product not found")
+	}
+	return &product, nil
+}
+
+func (uc *productUseCase) GetAllProductsFromCache(ctx context.Context) []domain.Product {
+	return uc.productCache.GetAll()
 }

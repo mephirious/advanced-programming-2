@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/mephirious/advanced-programming-2/inventory-service/config"
+	"github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/cache"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/grpc/service"
 	producer "github.com/mephirious/advanced-programming-2/inventory-service/internal/adapter/nats"
 	"github.com/mephirious/advanced-programming-2/inventory-service/internal/repository"
@@ -39,9 +40,11 @@ func New(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("nats.NewClient: %w", err)
 	}
 	inventoryProducer := producer.NewInventoryEventProducer(natsClient, "inventory.events")
+	productCache := cache.NewProductCache()
 
 	productRepository := repository.NewProductRepository(mongoDB.Connection)
-	productUseCase := usecase.NewProductUseCase(productRepository, inventoryProducer)
+	productUseCase := usecase.NewProductUseCase(productRepository, inventoryProducer, productCache)
+	cache.StartCacheRefresher(productCache)
 
 	categoryRepository := repository.NewCategoryRepository(mongoDB.Connection)
 	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)

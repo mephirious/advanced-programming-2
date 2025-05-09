@@ -121,4 +121,25 @@ service InventoryService {
   rpc UpdateCategory (UpdateCategoryRequest) returns (Category);
   rpc DeleteCategory (DeleteCategoryRequest) returns (google.protobuf.Empty);
   rpc ListCategories (ListCategoriesRequest) returns (ListCategoriesResponse);
+
+  // Cache RPC
+  rpc GetProductByIDFromCache (GetProductByIDFromCacheRequest) returns(Product);
+  rpc GetAllProductsFromCache (GetAllProductsFromCacheRequest) returns (GetAllProductsFromCacheResponse);
+}
+
+message GetProductByIDFromCacheRequest {
+  string id = 1;
+}
+
+message GetAllProductsFromCacheRequest {
+  optional string name = 1;
+  optional string category_id = 2;
+  optional double min_price = 3;
+  optional double max_price = 4;
+  optional int32 min_stock = 5;
+  optional int32 max_stock = 6;
+}
+
+message GetAllProductsFromCacheResponse {
+  repeated Product products = 1;
 }

@@ -20,16 +20,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	InventoryService_CreateProduct_FullMethodName   = "/inventory.InventoryService/CreateProduct"
-	InventoryService_GetProductByID_FullMethodName  = "/inventory.InventoryService/GetProductByID"
-	InventoryService_UpdateProduct_FullMethodName   = "/inventory.InventoryService/UpdateProduct"
-	InventoryService_DeleteProduct_FullMethodName   = "/inventory.InventoryService/DeleteProduct"
-	InventoryService_ListProducts_FullMethodName    = "/inventory.InventoryService/ListProducts"
-	InventoryService_CreateCategory_FullMethodName  = "/inventory.InventoryService/CreateCategory"
-	InventoryService_GetCategoryByID_FullMethodName = "/inventory.InventoryService/GetCategoryByID"
-	InventoryService_UpdateCategory_FullMethodName  = "/inventory.InventoryService/UpdateCategory"
-	InventoryService_DeleteCategory_FullMethodName  = "/inventory.InventoryService/DeleteCategory"
-	InventoryService_ListCategories_FullMethodName  = "/inventory.InventoryService/ListCategories"
+	InventoryService_CreateProduct_FullMethodName           = "/inventory.InventoryService/CreateProduct"
+	InventoryService_GetProductByID_FullMethodName          = "/inventory.InventoryService/GetProductByID"
+	InventoryService_UpdateProduct_FullMethodName           = "/inventory.InventoryService/UpdateProduct"
+	InventoryService_DeleteProduct_FullMethodName           = "/inventory.InventoryService/DeleteProduct"
+	InventoryService_ListProducts_FullMethodName            = "/inventory.InventoryService/ListProducts"
+	InventoryService_CreateCategory_FullMethodName          = "/inventory.InventoryService/CreateCategory"
+	InventoryService_GetCategoryByID_FullMethodName         = "/inventory.InventoryService/GetCategoryByID"
+	InventoryService_UpdateCategory_FullMethodName          = "/inventory.InventoryService/UpdateCategory"
+	InventoryService_DeleteCategory_FullMethodName          = "/inventory.InventoryService/DeleteCategory"
+	InventoryService_ListCategories_FullMethodName          = "/inventory.InventoryService/ListCategories"
+	InventoryService_GetProductByIDFromCache_FullMethodName = "/inventory.InventoryService/GetProductByIDFromCache"
+	InventoryService_GetAllProductsFromCache_FullMethodName = "/inventory.InventoryService/GetAllProductsFromCache"
 )
 
 // InventoryServiceClient is the client API for InventoryService service.
@@ -50,6 +52,9 @@ type InventoryServiceClient interface {
 	UpdateCategory(ctx context.Context, in *UpdateCategoryRequest, opts ...grpc.CallOption) (*Category, error)
 	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error)
+	// Cache RPC
+	GetProductByIDFromCache(ctx context.Context, in *GetProductByIDFromCacheRequest, opts ...grpc.CallOption) (*Product, error)
+	GetAllProductsFromCache(ctx context.Context, in *GetAllProductsFromCacheRequest, opts ...grpc.CallOption) (*GetAllProductsFromCacheResponse, error)
 }
 
 type inventoryServiceClient struct {
@@ -160,6 +165,26 @@ func (c *inventoryServiceClient) ListCategories(ctx context.Context, in *ListCat
 	return out, nil
 }
 
+func (c *inventoryServiceClient) GetProductByIDFromCache(ctx context.Context, in *GetProductByIDFromCacheRequest, opts ...grpc.CallOption) (*Product, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Product)
+	err := c.cc.Invoke(ctx, InventoryService_GetProductByIDFromCache_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inventoryServiceClient) GetAllProductsFromCache(ctx context.Context, in *GetAllProductsFromCacheRequest, opts ...grpc.CallOption) (*GetAllProductsFromCacheResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllProductsFromCacheResponse)
+	err := c.cc.Invoke(ctx, InventoryService_GetAllProductsFromCache_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InventoryServiceServer is the server API for InventoryService service.
 // All implementations must embed UnimplementedInventoryServiceServer
 // for forward compatibility.
@@ -178,6 +203,9 @@ type InventoryServiceServer interface {
 	UpdateCategory(context.Context, *UpdateCategoryRequest) (*Category, error)
 	DeleteCategory(context.Context, *DeleteCategoryRequest) (*emptypb.Empty, error)
 	ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error)
+	// Cache RPC
+	GetProductByIDFromCache(context.Context, *GetProductByIDFromCacheRequest) (*Product, error)
+	GetAllProductsFromCache(context.Context, *GetAllProductsFromCacheRequest) (*GetAllProductsFromCacheResponse, error)
 	mustEmbedUnimplementedInventoryServiceServer()
 }
 
@@ -217,6 +245,12 @@ func (UnimplementedInventoryServiceServer) DeleteCategory(context.Context, *Dele
 }
 func (UnimplementedInventoryServiceServer) ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
+}
+func (UnimplementedInventoryServiceServer) GetProductByIDFromCache(context.Context, *GetProductByIDFromCacheRequest) (*Product, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProductByIDFromCache not implemented")
+}
+func (UnimplementedInventoryServiceServer) GetAllProductsFromCache(context.Context, *GetAllProductsFromCacheRequest) (*GetAllProductsFromCacheResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllProductsFromCache not implemented")
 }
 func (UnimplementedInventoryServiceServer) mustEmbedUnimplementedInventoryServiceServer() {}
 func (UnimplementedInventoryServiceServer) testEmbeddedByValue()                          {}
@@ -419,6 +453,42 @@ func _InventoryService_ListCategories_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InventoryService_GetProductByIDFromCache_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductByIDFromCacheRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryServiceServer).GetProductByIDFromCache(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryService_GetProductByIDFromCache_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryServiceServer).GetProductByIDFromCache(ctx, req.(*GetProductByIDFromCacheRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InventoryService_GetAllProductsFromCache_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllProductsFromCacheRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InventoryServiceServer).GetAllProductsFromCache(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InventoryService_GetAllProductsFromCache_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InventoryServiceServer).GetAllProductsFromCache(ctx, req.(*GetAllProductsFromCacheRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InventoryService_ServiceDesc is the grpc.ServiceDesc for InventoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -465,6 +535,14 @@ var InventoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCategories",
 			Handler:    _InventoryService_ListCategories_Handler,
+		},
+		{
+			MethodName: "GetProductByIDFromCache",
+			Handler:    _InventoryService_GetProductByIDFromCache_Handler,
+		},
+		{
+			MethodName: "GetAllProductsFromCache",
+			Handler:    _InventoryService_GetAllProductsFromCache_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

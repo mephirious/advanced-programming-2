@@ -99,6 +99,13 @@ func main() {
 		handleResponse(c, res, err)
 	})
 
+	r.GET("/api/v1/products/cache/:id", func(c *gin.Context) {
+		res, err := inventoryClient.GetProductByIDFromCache(context.Background(), &inventorypb.GetProductByIDFromCacheRequest{
+			Id: c.Param("id"),
+		})
+		handleResponse(c, res, err)
+	})
+
 	r.DELETE("/api/v1/products/:id", func(c *gin.Context) {
 		_, err := inventoryClient.DeleteProduct(context.Background(), &inventorypb.DeleteProductRequest{
 			Id: c.Param("id"),
@@ -113,6 +120,11 @@ func main() {
 			Limit:      int32(queryInt(c, "limit", 10)),
 			Page:       int32(queryInt(c, "page", 1)),
 		})
+		handleResponse(c, res, err)
+	})
+
+	r.GET("/api/v1/products/cache", func(c *gin.Context) {
+		res, err := inventoryClient.GetAllProductsFromCache(context.Background(), &inventorypb.GetAllProductsFromCacheRequest{})
 		handleResponse(c, res, err)
 	})
 

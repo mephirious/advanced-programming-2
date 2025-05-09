@@ -943,6 +943,178 @@ func (x *ListCategoriesResponse) GetCategories() []*Category {
 	return nil
 }
 
+type GetProductByIDFromCacheRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProductByIDFromCacheRequest) Reset() {
+	*x = GetProductByIDFromCacheRequest{}
+	mi := &file_proto_inventory_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProductByIDFromCacheRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProductByIDFromCacheRequest) ProtoMessage() {}
+
+func (x *GetProductByIDFromCacheRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_inventory_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProductByIDFromCacheRequest.ProtoReflect.Descriptor instead.
+func (*GetProductByIDFromCacheRequest) Descriptor() ([]byte, []int) {
+	return file_proto_inventory_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetProductByIDFromCacheRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetAllProductsFromCacheRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	CategoryId    *string                `protobuf:"bytes,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
+	MinPrice      *float64               `protobuf:"fixed64,3,opt,name=min_price,json=minPrice,proto3,oneof" json:"min_price,omitempty"`
+	MaxPrice      *float64               `protobuf:"fixed64,4,opt,name=max_price,json=maxPrice,proto3,oneof" json:"max_price,omitempty"`
+	MinStock      *int32                 `protobuf:"varint,5,opt,name=min_stock,json=minStock,proto3,oneof" json:"min_stock,omitempty"`
+	MaxStock      *int32                 `protobuf:"varint,6,opt,name=max_stock,json=maxStock,proto3,oneof" json:"max_stock,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAllProductsFromCacheRequest) Reset() {
+	*x = GetAllProductsFromCacheRequest{}
+	mi := &file_proto_inventory_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAllProductsFromCacheRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllProductsFromCacheRequest) ProtoMessage() {}
+
+func (x *GetAllProductsFromCacheRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_inventory_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllProductsFromCacheRequest.ProtoReflect.Descriptor instead.
+func (*GetAllProductsFromCacheRequest) Descriptor() ([]byte, []int) {
+	return file_proto_inventory_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetAllProductsFromCacheRequest) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *GetAllProductsFromCacheRequest) GetCategoryId() string {
+	if x != nil && x.CategoryId != nil {
+		return *x.CategoryId
+	}
+	return ""
+}
+
+func (x *GetAllProductsFromCacheRequest) GetMinPrice() float64 {
+	if x != nil && x.MinPrice != nil {
+		return *x.MinPrice
+	}
+	return 0
+}
+
+func (x *GetAllProductsFromCacheRequest) GetMaxPrice() float64 {
+	if x != nil && x.MaxPrice != nil {
+		return *x.MaxPrice
+	}
+	return 0
+}
+
+func (x *GetAllProductsFromCacheRequest) GetMinStock() int32 {
+	if x != nil && x.MinStock != nil {
+		return *x.MinStock
+	}
+	return 0
+}
+
+func (x *GetAllProductsFromCacheRequest) GetMaxStock() int32 {
+	if x != nil && x.MaxStock != nil {
+		return *x.MaxStock
+	}
+	return 0
+}
+
+type GetAllProductsFromCacheResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Products      []*Product             `protobuf:"bytes,1,rep,name=products,proto3" json:"products,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAllProductsFromCacheResponse) Reset() {
+	*x = GetAllProductsFromCacheResponse{}
+	mi := &file_proto_inventory_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAllProductsFromCacheResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllProductsFromCacheResponse) ProtoMessage() {}
+
+func (x *GetAllProductsFromCacheResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_inventory_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllProductsFromCacheResponse.ProtoReflect.Descriptor instead.
+func (*GetAllProductsFromCacheResponse) Descriptor() ([]byte, []int) {
+	return file_proto_inventory_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetAllProductsFromCacheResponse) GetProducts() []*Product {
+	if x != nil {
+		return x.Products
+	}
+	return nil
+}
+
 var File_proto_inventory_proto protoreflect.FileDescriptor
 
 const file_proto_inventory_proto_rawDesc = "" +
@@ -1039,7 +1211,29 @@ const file_proto_inventory_proto_rawDesc = "" +
 	"\x16ListCategoriesResponse\x123\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2\x13.inventory.CategoryR\n" +
-	"categories2\xf9\x05\n" +
+	"categories\"0\n" +
+	"\x1eGetProductByIDFromCacheRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xb8\x02\n" +
+	"\x1eGetAllProductsFromCacheRequest\x12\x17\n" +
+	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12$\n" +
+	"\vcategory_id\x18\x02 \x01(\tH\x01R\n" +
+	"categoryId\x88\x01\x01\x12 \n" +
+	"\tmin_price\x18\x03 \x01(\x01H\x02R\bminPrice\x88\x01\x01\x12 \n" +
+	"\tmax_price\x18\x04 \x01(\x01H\x03R\bmaxPrice\x88\x01\x01\x12 \n" +
+	"\tmin_stock\x18\x05 \x01(\x05H\x04R\bminStock\x88\x01\x01\x12 \n" +
+	"\tmax_stock\x18\x06 \x01(\x05H\x05R\bmaxStock\x88\x01\x01B\a\n" +
+	"\x05_nameB\x0e\n" +
+	"\f_category_idB\f\n" +
+	"\n" +
+	"_min_priceB\f\n" +
+	"\n" +
+	"_max_priceB\f\n" +
+	"\n" +
+	"_min_stockB\f\n" +
+	"\n" +
+	"_max_stock\"Q\n" +
+	"\x1fGetAllProductsFromCacheResponse\x12.\n" +
+	"\bproducts\x18\x01 \x03(\v2\x12.inventory.ProductR\bproducts2\xc5\a\n" +
 	"\x10InventoryService\x12D\n" +
 	"\rCreateProduct\x12\x1f.inventory.CreateProductRequest\x1a\x12.inventory.Product\x12B\n" +
 	"\x0eGetProductByID\x12\x1c.inventory.GetProductRequest\x1a\x12.inventory.Product\x12D\n" +
@@ -1050,7 +1244,9 @@ const file_proto_inventory_proto_rawDesc = "" +
 	"\x0fGetCategoryByID\x12\x1d.inventory.GetCategoryRequest\x1a\x13.inventory.Category\x12G\n" +
 	"\x0eUpdateCategory\x12 .inventory.UpdateCategoryRequest\x1a\x13.inventory.Category\x12J\n" +
 	"\x0eDeleteCategory\x12 .inventory.DeleteCategoryRequest\x1a\x16.google.protobuf.Empty\x12U\n" +
-	"\x0eListCategories\x12 .inventory.ListCategoriesRequest\x1a!.inventory.ListCategoriesResponseB\\ZZgithub.com/mephirious/advanced-programming-2/inventory-service/pkg/api/inventory;inventoryb\x06proto3"
+	"\x0eListCategories\x12 .inventory.ListCategoriesRequest\x1a!.inventory.ListCategoriesResponse\x12X\n" +
+	"\x17GetProductByIDFromCache\x12).inventory.GetProductByIDFromCacheRequest\x1a\x12.inventory.Product\x12p\n" +
+	"\x17GetAllProductsFromCache\x12).inventory.GetAllProductsFromCacheRequest\x1a*.inventory.GetAllProductsFromCacheResponseB\\ZZgithub.com/mephirious/advanced-programming-2/inventory-service/pkg/api/inventory;inventoryb\x06proto3"
 
 var (
 	file_proto_inventory_proto_rawDescOnce sync.Once
@@ -1064,58 +1260,66 @@ func file_proto_inventory_proto_rawDescGZIP() []byte {
 	return file_proto_inventory_proto_rawDescData
 }
 
-var file_proto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_proto_inventory_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_proto_inventory_proto_goTypes = []any{
-	(*Product)(nil),                // 0: inventory.Product
-	(*CreateProductRequest)(nil),   // 1: inventory.CreateProductRequest
-	(*GetProductRequest)(nil),      // 2: inventory.GetProductRequest
-	(*UpdateProductRequest)(nil),   // 3: inventory.UpdateProductRequest
-	(*DeleteProductRequest)(nil),   // 4: inventory.DeleteProductRequest
-	(*GetByIDRequest)(nil),         // 5: inventory.GetByIDRequest
-	(*ListProductsRequest)(nil),    // 6: inventory.ListProductsRequest
-	(*ListProductsResponse)(nil),   // 7: inventory.ListProductsResponse
-	(*Category)(nil),               // 8: inventory.Category
-	(*CreateCategoryRequest)(nil),  // 9: inventory.CreateCategoryRequest
-	(*GetCategoryRequest)(nil),     // 10: inventory.GetCategoryRequest
-	(*UpdateCategoryRequest)(nil),  // 11: inventory.UpdateCategoryRequest
-	(*DeleteCategoryRequest)(nil),  // 12: inventory.DeleteCategoryRequest
-	(*ListCategoriesRequest)(nil),  // 13: inventory.ListCategoriesRequest
-	(*ListCategoriesResponse)(nil), // 14: inventory.ListCategoriesResponse
-	(*timestamppb.Timestamp)(nil),  // 15: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),          // 16: google.protobuf.Empty
+	(*Product)(nil),                         // 0: inventory.Product
+	(*CreateProductRequest)(nil),            // 1: inventory.CreateProductRequest
+	(*GetProductRequest)(nil),               // 2: inventory.GetProductRequest
+	(*UpdateProductRequest)(nil),            // 3: inventory.UpdateProductRequest
+	(*DeleteProductRequest)(nil),            // 4: inventory.DeleteProductRequest
+	(*GetByIDRequest)(nil),                  // 5: inventory.GetByIDRequest
+	(*ListProductsRequest)(nil),             // 6: inventory.ListProductsRequest
+	(*ListProductsResponse)(nil),            // 7: inventory.ListProductsResponse
+	(*Category)(nil),                        // 8: inventory.Category
+	(*CreateCategoryRequest)(nil),           // 9: inventory.CreateCategoryRequest
+	(*GetCategoryRequest)(nil),              // 10: inventory.GetCategoryRequest
+	(*UpdateCategoryRequest)(nil),           // 11: inventory.UpdateCategoryRequest
+	(*DeleteCategoryRequest)(nil),           // 12: inventory.DeleteCategoryRequest
+	(*ListCategoriesRequest)(nil),           // 13: inventory.ListCategoriesRequest
+	(*ListCategoriesResponse)(nil),          // 14: inventory.ListCategoriesResponse
+	(*GetProductByIDFromCacheRequest)(nil),  // 15: inventory.GetProductByIDFromCacheRequest
+	(*GetAllProductsFromCacheRequest)(nil),  // 16: inventory.GetAllProductsFromCacheRequest
+	(*GetAllProductsFromCacheResponse)(nil), // 17: inventory.GetAllProductsFromCacheResponse
+	(*timestamppb.Timestamp)(nil),           // 18: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),                   // 19: google.protobuf.Empty
 }
 var file_proto_inventory_proto_depIdxs = []int32{
-	15, // 0: inventory.Product.created_at:type_name -> google.protobuf.Timestamp
-	15, // 1: inventory.Product.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 0: inventory.Product.created_at:type_name -> google.protobuf.Timestamp
+	18, // 1: inventory.Product.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: inventory.ListProductsResponse.products:type_name -> inventory.Product
-	15, // 3: inventory.Category.created_at:type_name -> google.protobuf.Timestamp
-	15, // 4: inventory.Category.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 3: inventory.Category.created_at:type_name -> google.protobuf.Timestamp
+	18, // 4: inventory.Category.updated_at:type_name -> google.protobuf.Timestamp
 	8,  // 5: inventory.ListCategoriesResponse.categories:type_name -> inventory.Category
-	1,  // 6: inventory.InventoryService.CreateProduct:input_type -> inventory.CreateProductRequest
-	2,  // 7: inventory.InventoryService.GetProductByID:input_type -> inventory.GetProductRequest
-	3,  // 8: inventory.InventoryService.UpdateProduct:input_type -> inventory.UpdateProductRequest
-	4,  // 9: inventory.InventoryService.DeleteProduct:input_type -> inventory.DeleteProductRequest
-	6,  // 10: inventory.InventoryService.ListProducts:input_type -> inventory.ListProductsRequest
-	9,  // 11: inventory.InventoryService.CreateCategory:input_type -> inventory.CreateCategoryRequest
-	10, // 12: inventory.InventoryService.GetCategoryByID:input_type -> inventory.GetCategoryRequest
-	11, // 13: inventory.InventoryService.UpdateCategory:input_type -> inventory.UpdateCategoryRequest
-	12, // 14: inventory.InventoryService.DeleteCategory:input_type -> inventory.DeleteCategoryRequest
-	13, // 15: inventory.InventoryService.ListCategories:input_type -> inventory.ListCategoriesRequest
-	0,  // 16: inventory.InventoryService.CreateProduct:output_type -> inventory.Product
-	0,  // 17: inventory.InventoryService.GetProductByID:output_type -> inventory.Product
-	0,  // 18: inventory.InventoryService.UpdateProduct:output_type -> inventory.Product
-	16, // 19: inventory.InventoryService.DeleteProduct:output_type -> google.protobuf.Empty
-	7,  // 20: inventory.InventoryService.ListProducts:output_type -> inventory.ListProductsResponse
-	8,  // 21: inventory.InventoryService.CreateCategory:output_type -> inventory.Category
-	8,  // 22: inventory.InventoryService.GetCategoryByID:output_type -> inventory.Category
-	8,  // 23: inventory.InventoryService.UpdateCategory:output_type -> inventory.Category
-	16, // 24: inventory.InventoryService.DeleteCategory:output_type -> google.protobuf.Empty
-	14, // 25: inventory.InventoryService.ListCategories:output_type -> inventory.ListCategoriesResponse
-	16, // [16:26] is the sub-list for method output_type
-	6,  // [6:16] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	0,  // 6: inventory.GetAllProductsFromCacheResponse.products:type_name -> inventory.Product
+	1,  // 7: inventory.InventoryService.CreateProduct:input_type -> inventory.CreateProductRequest
+	2,  // 8: inventory.InventoryService.GetProductByID:input_type -> inventory.GetProductRequest
+	3,  // 9: inventory.InventoryService.UpdateProduct:input_type -> inventory.UpdateProductRequest
+	4,  // 10: inventory.InventoryService.DeleteProduct:input_type -> inventory.DeleteProductRequest
+	6,  // 11: inventory.InventoryService.ListProducts:input_type -> inventory.ListProductsRequest
+	9,  // 12: inventory.InventoryService.CreateCategory:input_type -> inventory.CreateCategoryRequest
+	10, // 13: inventory.InventoryService.GetCategoryByID:input_type -> inventory.GetCategoryRequest
+	11, // 14: inventory.InventoryService.UpdateCategory:input_type -> inventory.UpdateCategoryRequest
+	12, // 15: inventory.InventoryService.DeleteCategory:input_type -> inventory.DeleteCategoryRequest
+	13, // 16: inventory.InventoryService.ListCategories:input_type -> inventory.ListCategoriesRequest
+	15, // 17: inventory.InventoryService.GetProductByIDFromCache:input_type -> inventory.GetProductByIDFromCacheRequest
+	16, // 18: inventory.InventoryService.GetAllProductsFromCache:input_type -> inventory.GetAllProductsFromCacheRequest
+	0,  // 19: inventory.InventoryService.CreateProduct:output_type -> inventory.Product
+	0,  // 20: inventory.InventoryService.GetProductByID:output_type -> inventory.Product
+	0,  // 21: inventory.InventoryService.UpdateProduct:output_type -> inventory.Product
+	19, // 22: inventory.InventoryService.DeleteProduct:output_type -> google.protobuf.Empty
+	7,  // 23: inventory.InventoryService.ListProducts:output_type -> inventory.ListProductsResponse
+	8,  // 24: inventory.InventoryService.CreateCategory:output_type -> inventory.Category
+	8,  // 25: inventory.InventoryService.GetCategoryByID:output_type -> inventory.Category
+	8,  // 26: inventory.InventoryService.UpdateCategory:output_type -> inventory.Category
+	19, // 27: inventory.InventoryService.DeleteCategory:output_type -> google.protobuf.Empty
+	14, // 28: inventory.InventoryService.ListCategories:output_type -> inventory.ListCategoriesResponse
+	0,  // 29: inventory.InventoryService.GetProductByIDFromCache:output_type -> inventory.Product
+	17, // 30: inventory.InventoryService.GetAllProductsFromCache:output_type -> inventory.GetAllProductsFromCacheResponse
+	19, // [19:31] is the sub-list for method output_type
+	7,  // [7:19] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_proto_inventory_proto_init() }
@@ -1127,13 +1331,14 @@ func file_proto_inventory_proto_init() {
 	file_proto_inventory_proto_msgTypes[6].OneofWrappers = []any{}
 	file_proto_inventory_proto_msgTypes[11].OneofWrappers = []any{}
 	file_proto_inventory_proto_msgTypes[13].OneofWrappers = []any{}
+	file_proto_inventory_proto_msgTypes[16].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_inventory_proto_rawDesc), len(file_proto_inventory_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -106,7 +106,7 @@ grpcurl -plaintext -d '{
 }' $GRPC_SERVER $SERVICE/ListUserOrders
 
 
-67f271f8807b59ec2efe8ab1
+  
 
 grpcurl -plaintext -d '{
     "user_id": "67f271f8807b59ec2efe8ab1"
@@ -115,3 +115,18 @@ grpcurl -plaintext -d '{
 grpcurl -plaintext -d '{
     "user_id": "67f271f8807b59ec2efe8ab1"
   }' localhost:8004 statistics.StatisticsService/GetUserStatistics
+
+
+681d92349ca7146d3c3db475
+681d92389ca7146d3c3db476
+
+
+grpcurl -plaintext -d '{
+}' $GRPC_SERVER $SERVICE/GetAllProductsFromCache
+
+681d9392a46fdde09eca7c3c  
+681d9393a46fdde09eca7c3d
+
+grpcurl -plaintext -d '{
+  "id": "681d9392a46fdde09eca7c3c"
+}' $GRPC_SERVER $SERVICE/GetProductByIDFromCache
